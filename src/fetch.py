@@ -1,54 +1,72 @@
 import os
 import yaml
-import getpass
 import hashlib
 import pickle
+from datetime import datetime
+from tkinter import messagebox
+from customtkinter import (
+    CTkButton,
+    CTk,
+    CTkLabel,
+    CTkEntry,
+)
 
 from utils import get_activities, init_api
-from datetime import datetime
 
 
-def save_credentials(email, password):
-    hashed = hashlib.sha256(password.encode()).hexdigest()
-    with open("credentials.pkl", "wb") as file:
-        pickle.dump({"email": email, "password": hashed}, file)
-
-
-def load_credentials():
-    with open("credentials.pkl", "rb") as file:
-        credentials = pickle.load(file)
-    return credentials["email"], credentials["password"]
-
-
-def check_credentials():
-    if os.path.exists("credentials.pkl"):
-        return load_credentials()
-    else:
-        email = input("Entre votre email : ")
-        password = getpass.getpass("Entrez votre mot de passe : ")
-        save_credentials(email, password)
-        return email, password
-
-
-if __name__ == "__main__":
-    email, password = check_credentials()
-
-    config_pth = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-        "conf/config.yml",
-    )
-
-    with open(config_pth, "r") as file:
-        params = yaml.safe_load(file)
+def submit():
+    email = email_entry.get()
+    password = password_entry.get()
+    startdate = startdate_entry.get()
+    enddate = enddate_entry.get()
 
     api = init_api(email=email, password=password)
-
-    startdate = "1900-01-01"  # very old startdate
-    enddate = datetime.now().strftime('%Y-%m-%d')  # current date
-
     get_activities(
         api=api,
-        startdate=params["startdate"],
-        enddate=params["enddate"],
+        startdate=startdate,
+        enddate=enddate,
         activitytype="",
     )
+    messagebox.showinfo("Succès", "Activités téléchargées avec succès.")
+
+
+root = CTk()
+
+email_label = CTkLabel(root, text="Email:")
+email_label.pack(pady=(10, 0), ipadx=100)
+
+email_entry = CTkEntry(root)
+email_entry.pack(pady=(0, 10))
+
+password_label = CTkLabel(root, text="Mot de passe:")
+password_label.pack(pady=(10, 0), ipadx=100)
+
+password_entry = CTkEntry(root, show="*")
+password_entry.pack(pady=(0, 10))
+
+startdate_label = CTkLabel(root, text="Date de début (JJ-MM-AAAA):")
+startdate_label.pack(pady=(10, 0), ipadx=100)
+
+startdate_entry = CTkEntry(root)
+startdate_entry.insert(
+    0, datetime.strptime("1900-01-01", "%Y-%m-%d").strftime("%Y-%m-%d")
+)
+startdate_entry.pack(pady=(0, 10))
+
+enddate_label = CTkLabel(root, text="Date de fin (JJ-MM-AAAA):")
+enddate_label.pack(pady=(10, 0), ipadx=100)
+
+enddate_entry = CTkEntry(root)
+enddate_entry.insert(0, datetime.now().strftime("%Y-%m-%d"))
+enddate_entry.pack(pady=(0, 10))
+
+submit_button = CTkButton(root, text="Télécharger", command=submit)
+submit_button.pack(pady=(10, 30), ipadx=80)
+
+# email, password = load_credentials()
+
+# if email and password:
+#     email_entry.insert(0, email)
+#     password_entry.insert(0, password)
+
+root.mainloop()
