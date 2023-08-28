@@ -1,6 +1,7 @@
+import sys
+import os
 import pandas as pd
 
-from tqdm import tqdm
 from io import BytesIO
 from garminconnect import Garmin
 
@@ -39,7 +40,7 @@ def get_activities(
     iter_count = 1
 
     # Download activities
-    for activity in tqdm(activities):
+    for activity in activities:
         activity_id = activity["activityId"]
 
         csv_data = api.download_activity(
@@ -55,8 +56,9 @@ def get_activities(
         activities_data = pd.concat([activities_data, activity_data])
 
         # Update progress bar
-        text = f"Téléchargement des activités en cours ...  {iter_count}/{len(activities)}"
-        progresstext.configure(text=text)
+        message = "Téléchargement des activités en cours ... "
+        display_text = message + f"{iter_count}/{len(activities)}"
+        progresstext.configure(text=display_text)
         progressbar.set(progressbar.get() + 1 / len(activities))
         root.update_idletasks()
         iter_count += 1
@@ -90,6 +92,15 @@ def get_activities(
         .reset_index(drop=True)
     )
 
-    activities_data.to_excel(f"./{output_file}.xlsx", index=False)
+    if getattr(sys, 'frozen', False):
+        # we are running in a bundle
+        bundle_dir = os.path.dirname(sys.executable)
+    else:
+        # we are running in a normal Python environment
+        bundle_dir = os.path.dirname(os.path.abspath(__file__))
 
-    return f"./{output_file}.xlsx"
+    dump_path = os.path.join(bundle_dir, f"{output_file}.xlsx")
+
+    activities_data.to_excel(dump_path, index=False)
+
+    return dump_path
