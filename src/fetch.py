@@ -1,10 +1,36 @@
 import os
 import yaml
+import getpass
+import hashlib
+import pickle
 
 from utils import get_activities, init_api
 
 
+def save_credentials(email, password):
+    hashed = hashlib.sha256(password.encode()).hexdigest()
+    with open("credentials.pkl", "wb") as file:
+        pickle.dump({"email": email, "password": hashed}, file)
+
+
+def load_credentials():
+    with open("credentials.pkl", "rb") as file:
+        credentials = pickle.load(file)
+    return credentials["email"], credentials["password"]
+
+
+def check_credentials():
+    if os.path.exists("credentials.pkl"):
+        return load_credentials()
+    else:
+        email = input("Entre votre email : ")
+        password = getpass.getpass("Entrez votre mot de passe : ")
+        save_credentials(email, password)
+        return email, password
+
+
 if __name__ == "__main__":
+    email, password = check_credentials()
 
     config_pth = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -14,7 +40,7 @@ if __name__ == "__main__":
     with open(config_pth, "r") as file:
         params = yaml.safe_load(file)
 
-    api = init_api(email=params["email"], password=params["password"])
+    api = init_api(email=email, password=password)
 
     get_activities(
         api=api,
