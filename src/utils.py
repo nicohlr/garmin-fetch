@@ -14,7 +14,9 @@ def init_api(email, password):
     return api
 
 
-def get_activities(api, startdate, enddate, activitytype=""):
+def get_activities(
+    api, startdate, enddate, progressbar, progresstext, root, activitytype=""
+):
     """Get activities data from startdate 'YYYY-MM-DD' to enddate 'YYYY-MM-DD',
 
     Args:
@@ -34,9 +36,10 @@ def get_activities(api, startdate, enddate, activitytype=""):
 
     activities_data = pd.DataFrame()
 
+    iter_count = 1
+
     # Download activities
     for activity in tqdm(activities):
-
         activity_id = activity["activityId"]
 
         csv_data = api.download_activity(
@@ -50,6 +53,13 @@ def get_activities(api, startdate, enddate, activitytype=""):
         activity_data["Titre"] = activity["activityName"]
 
         activities_data = pd.concat([activities_data, activity_data])
+
+        # Update progress bar
+        text = f"Téléchargement des activités en cours ...  {iter_count}/{len(activities)}"
+        progresstext.configure(text=text)
+        progressbar.set(progressbar.get() + 1 / len(activities))
+        root.update_idletasks()
+        iter_count += 1
 
     columns_order = [
         "Type d'activité",
@@ -81,3 +91,5 @@ def get_activities(api, startdate, enddate, activitytype=""):
     )
 
     activities_data.to_excel(f"./{output_file}.xlsx", index=False)
+
+    return f"./{output_file}.xlsx"
