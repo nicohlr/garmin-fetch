@@ -49,17 +49,21 @@ def update_days_combobox(combobox_day, combobox_month, combobox_year):
     root.update_idletasks()
 
 
-def save_credentials(email):
-    with open("credentials.txt", "w") as f:
-        f.write(email)
+def save_settings(email, start_date):
+    with open("settings.txt", "w") as f:
+        f.write(email + "\n")
+        f.write(start_date)
 
 
-def load_credentials():
+def load_settings():
     try:
-        with open("credentials.txt", "r") as f:
-            return f.read().strip()
+        with open("settings.txt", "r") as f:
+            lines = f.readlines()
+            email = lines[0].strip()
+            start_date = lines[1].strip() if len(lines) > 1 else None
+            return email, start_date
     except FileNotFoundError:
-        return None
+        return None, None
 
 
 def submit():
@@ -69,6 +73,14 @@ def submit():
         start_year.get() + "-" + start_month.get() + "-" + start_day.get()
     )
     enddate = end_year.get() + "-" + end_month.get() + "-" + end_day.get()
+
+    # Check if password is empty
+    if not email:
+        error_message.configure(text="Email manquant.")
+        progress.grid_forget()
+        progress_text.grid_forget()
+        error_message.grid(row=1, column=0, columnspan=3)
+        return
 
     # Check email validity
     if not email or "@" not in email:
@@ -86,6 +98,20 @@ def submit():
         error_message.grid(row=1, column=0, columnspan=3)
         return
 
+    # Convert the start and end dates to datetime objects for comparison
+    start_datetime = datetime.strptime(startdate, "%Y-%m-%d")
+    end_datetime = datetime.strptime(enddate, "%Y-%m-%d")
+
+    # Check if start date is after end date
+    if start_datetime > end_datetime:
+        error_message.configure(
+            text="La date de début ne peut pas être\npostérieure à la date de fin."
+        )
+        progress.grid_forget()
+        progress_text.grid_forget()
+        error_message.grid(row=1, column=0, columnspan=3)
+        return
+
     try:
         api = init_api(email=email, password=password)
         error_message.grid_forget()
@@ -95,7 +121,7 @@ def submit():
         progress.grid(row=12, column=0, columnspan=3, pady=(0, 30))
 
         # Save the email
-        save_credentials(email)
+        save_settings(email, startdate)
 
         filename = get_activities(
             api=api,
@@ -142,7 +168,8 @@ email_label = CTkLabel(root, text="Email :")
 email_label.grid(row=2, column=0, columnspan=3, pady=(10, 0))
 
 email_entry = CTkEntry(root)
-email = load_credentials()
+email, saved_start_date = load_settings()
+
 if email:
     email_entry.insert(0, email)
 email_entry.grid(
@@ -168,7 +195,6 @@ start_day = CTkComboBox(
     width=70,
     command=lambda e: update_days_combobox(start_day, start_month, start_year),
 )
-start_day.set("01")
 
 start_month = CTkComboBox(
     root,
@@ -176,7 +202,6 @@ start_month = CTkComboBox(
     width=70,
     command=lambda e: update_days_combobox(start_day, start_month, start_year),
 )
-start_month.set("01")
 
 start_year = CTkComboBox(
     root,
@@ -184,7 +209,17 @@ start_year = CTkComboBox(
     width=90,
     command=lambda e: update_days_combobox(start_day, start_month, start_year),
 )
-start_year.set(current_year)
+
+if saved_start_date:
+    saved_year, saved_month, saved_day = saved_start_date.split("-")
+    start_year.set(saved_year)
+    start_month.set(saved_month)
+    start_day.set(saved_day)
+else:
+    start_year.set(current_year)
+    start_month.set("01")
+    start_day.set("01")
+
 
 start_day.grid(row=7, column=0, sticky="W", padx=(50, 0))
 start_month.grid(row=7, column=1, sticky="W")
