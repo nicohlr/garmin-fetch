@@ -1,3 +1,5 @@
+import os
+import sys
 import customtkinter
 
 from datetime import datetime
@@ -157,6 +159,9 @@ def submit():
 
 root = CTk()
 root.title("Téléchargement d'activités Garmin")
+
+base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+image_path = os.path.join(base_path, 'imgs', 'your_image.png')
 
 img_light = Image.open("imgs/garmin_lightmode.png")
 img_dark = Image.open("imgs/garmin_darkmode.png").resize(img_light.size)

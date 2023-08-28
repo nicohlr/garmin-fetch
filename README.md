@@ -1,5 +1,5 @@
 # garmin-fetcher
 
 ```sh
-pyinstaller -F --add-data "src;src" --add-data "conf;conf" src/fetch.py
+pyinstaller --onefile --add-data='imgs/;imgs/' --icon imgs/garmin.ico --name Garmin src/garmin.py
 ```
