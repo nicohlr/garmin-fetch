@@ -15,6 +15,7 @@ from customtkinter import (
 from PIL import Image
 
 from utils import get_activities, init_api
+from garminconnect import GarminConnectAuthenticationError
 
 
 customtkinter.set_appearance_mode("dark")
@@ -69,28 +70,55 @@ def submit():
     )
     enddate = end_year.get() + "-" + end_month.get() + "-" + end_day.get()
 
-    api = init_api(email=email, password=password)
+    # Check email validity
+    if not email or "@" not in email:
+        error_message.configure(text="Email invalide.")
+        progress.grid_forget()
+        progress_text.grid_forget()
+        error_message.grid(row=1, column=0, columnspan=3)
+        return
 
-    progress.set(0)
-    progress.grid(row=11, column=0, columnspan=3, pady=(0, 30))
+    # Check if password is empty
+    if not password:
+        error_message.configure(text="Mot de passe manquant.")
+        progress.grid_forget()
+        progress_text.grid_forget()
+        error_message.grid(row=1, column=0, columnspan=3)
+        return
 
-    # Save the email
-    save_credentials(email)
+    try:
+        api = init_api(email=email, password=password)
+        error_message.grid_forget()
 
-    filename = get_activities(
-        api=api,
-        startdate=startdate,
-        enddate=enddate,
-        progressbar=progress,
-        progresstext=progress_text,
-        root=root,
-        activitytype="",
-    )
-    message = (
-        "Activités téléchargées avec succès.\n\n"
-        + f"Le fichier est déposé au chemin suivant :\n\n{filename}"
-    )
-    messagebox.showinfo("Succès", message)
+        progress.set(0)
+        progress_text.grid(row=11, column=0, columnspan=3)
+        progress.grid(row=12, column=0, columnspan=3, pady=(0, 30))
+
+        # Save the email
+        save_credentials(email)
+
+        filename = get_activities(
+            api=api,
+            startdate=startdate,
+            enddate=enddate,
+            progressbar=progress,
+            progresstext=progress_text,
+            root=root,
+            activitytype="",
+        )
+        message = (
+            "Activités téléchargées avec succès.\n\n"
+            + f"Le fichier est déposé au chemin suivant :\n\n{filename}"
+        )
+        messagebox.showinfo("Succès", message)
+
+    except GarminConnectAuthenticationError:
+        error_message.configure(
+            text="Erreur d'authentification.\n Veuillez vérifier vos identifiants."
+        )
+        progress.grid_forget()
+        progress_text.grid_forget()
+        error_message.grid(row=1, column=0, columnspan=3)
 
 
 root = CTk()
@@ -108,29 +136,31 @@ garmin_logo = CTkImage(
 image_label = CTkLabel(root, image=garmin_logo, text="")
 image_label.grid(row=0, column=0, columnspan=3, pady=(20, 20))
 
+error_message = CTkLabel(root, text="", text_color="red")
+
 email_label = CTkLabel(root, text="Email :")
-email_label.grid(row=1, column=0, columnspan=3, pady=(10, 0))
+email_label.grid(row=2, column=0, columnspan=3, pady=(10, 0))
 
 email_entry = CTkEntry(root)
 email = load_credentials()
 if email:
     email_entry.insert(0, email)
 email_entry.grid(
-    row=2, column=0, columnspan=3, pady=(0, 10), ipadx=80, padx=20
+    row=3, column=0, columnspan=3, pady=(0, 10), ipadx=80, padx=20
 )
 
 password_label = CTkLabel(root, text="Mot de passe :")
-password_label.grid(row=3, column=0, columnspan=3, pady=(10, 0))
+password_label.grid(row=4, column=0, columnspan=3, pady=(10, 0))
 
 password_entry = CTkEntry(root, show="*")
 password_entry.grid(
-    row=4, column=0, columnspan=3, pady=(0, 10), ipadx=80, padx=20
+    row=5, column=0, columnspan=3, pady=(0, 10), ipadx=80, padx=20
 )
 
 current_year = datetime.now().year
 
 startdate_label = CTkLabel(root, text="Date de début (JJ-MM-AAAA) :")
-startdate_label.grid(row=5, column=0, columnspan=3, pady=(10, 0))
+startdate_label.grid(row=6, column=0, columnspan=3, pady=(10, 0))
 
 start_day = CTkComboBox(
     root,
@@ -156,13 +186,13 @@ start_year = CTkComboBox(
 )
 start_year.set(current_year)
 
-start_day.grid(row=6, column=0, sticky="W", padx=(50, 0))
-start_month.grid(row=6, column=1, sticky="W")
-start_year.grid(row=6, column=2, sticky="W", padx=(0, 50))
+start_day.grid(row=7, column=0, sticky="W", padx=(50, 0))
+start_month.grid(row=7, column=1, sticky="W")
+start_year.grid(row=7, column=2, sticky="W", padx=(0, 50))
 
 # create comboboxes for end date
 enddate_label = CTkLabel(root, text="Date de fin (JJ-MM-AAAA) :")
-enddate_label.grid(row=7, column=0, columnspan=3, pady=(10, 0), ipadx=90)
+enddate_label.grid(row=8, column=0, columnspan=3, pady=(10, 0), ipadx=90)
 
 end_day = CTkComboBox(
     root,
@@ -186,15 +216,14 @@ end_year = CTkComboBox(
 )
 end_year.set(current_year)
 
-end_day.grid(row=8, column=0, sticky="W", padx=(50, 0))
-end_month.grid(row=8, column=1, sticky="W")
-end_year.grid(row=8, column=2, sticky="W", padx=(0, 50))
+end_day.grid(row=9, column=0, sticky="W", padx=(50, 0))
+end_month.grid(row=9, column=1, sticky="W")
+end_year.grid(row=9, column=2, sticky="W", padx=(0, 50))
 
 submit_button = CTkButton(root, text="Télécharger", command=submit)
-submit_button.grid(row=9, column=0, columnspan=3, pady=(30, 10), ipadx=80)
+submit_button.grid(row=10, column=0, columnspan=3, pady=(30, 30), ipadx=80)
 
 progress_text = CTkLabel(root, text="")
-progress_text.grid(row=10, column=0, columnspan=3)
 
 progress = CTkProgressBar(
     root, orientation="horizontal", width=300, height=15, mode="determinate"
