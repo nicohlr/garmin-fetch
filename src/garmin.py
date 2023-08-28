@@ -209,21 +209,21 @@ startdate_label.grid(row=6, column=0, columnspan=3, pady=(10, 0))
 start_day = CTkComboBox(
     root,
     values=[str(i).zfill(2) for i in range(1, 32)],
-    width=70,
+    width=60,
     command=lambda e: update_days_combobox(start_day, start_month, start_year),
 )
 
 start_month = CTkComboBox(
     root,
     values=[str(i).zfill(2) for i in range(1, 13)],
-    width=70,
+    width=60,
     command=lambda e: update_days_combobox(start_day, start_month, start_year),
 )
 
 start_year = CTkComboBox(
     root,
     values=[str(i) for i in range(2000, current_year + 1)][::-1],
-    width=90,
+    width=80,
     command=lambda e: update_days_combobox(start_day, start_month, start_year),
 )
 
@@ -249,21 +249,21 @@ enddate_label.grid(row=8, column=0, columnspan=3, pady=(10, 0), ipadx=90)
 end_day = CTkComboBox(
     root,
     values=[str(i).zfill(2) for i in range(1, 32)],
-    width=70,
+    width=60,
     command=lambda e: update_days_combobox(end_day, end_month, end_year),
 )
 end_day.set(str(datetime.now().day).zfill(2))
 end_month = CTkComboBox(
     root,
     values=[str(i).zfill(2) for i in range(1, 13)],
-    width=70,
+    width=60,
     command=lambda e: update_days_combobox(end_day, end_month, end_year),
 )
 end_month.set(str(datetime.now().month).zfill(2))
 end_year = CTkComboBox(
     root,
     values=[str(i) for i in range(2000, current_year + 1)][::-1],
-    width=90,
+    width=80,
     command=lambda e: update_days_combobox(end_day, end_month, end_year),
 )
 end_year.set(current_year)
@@ -289,7 +289,7 @@ activity_type_combobox.set(
     saved_activity_type if saved_activity_type else "Toutes activités"
 )
 activity_type_combobox.grid(
-    row=11, column=0, columnspan=3, pady=(0, 10), ipadx=60
+    row=11, column=0, columnspan=3, pady=(0, 10), ipadx=80
 )
 
 submit_button = CTkButton(root, text="Télécharger", command=submit)
