@@ -86,13 +86,22 @@ def get_activities(
         "Perte d'altitude",
     ]
 
+    present_columns = [
+        col for col in columns_order if col in activities_data.columns
+    ]
+
+    additional_columns = [
+        col for col in activities_data.columns if col not in present_columns
+    ]
+    present_columns.extend(additional_columns)
+
     activities_data = (
-        activities_data[columns_order]
+        activities_data[present_columns]
         .drop(["Intervalle", "Heure"], axis=1)
         .reset_index(drop=True)
     )
 
-    if getattr(sys, 'frozen', False):
+    if getattr(sys, "frozen", False):
         # we are running in a bundle
         bundle_dir = os.path.dirname(sys.executable)
     else:

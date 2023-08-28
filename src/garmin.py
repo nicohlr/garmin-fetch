@@ -73,6 +73,8 @@ def submit():
         start_year.get() + "-" + start_month.get() + "-" + start_day.get()
     )
     enddate = end_year.get() + "-" + end_month.get() + "-" + end_day.get()
+    selected_activity = activity_type_combobox.get()
+    activity_type = activity_types[selected_activity]
 
     # Check if password is empty
     if not email:
@@ -87,6 +89,7 @@ def submit():
         error_message.configure(text="Email invalide.")
         progress.grid_forget()
         progress_text.grid_forget()
+        submit_button.configure(pady=(30, 30))
         error_message.grid(row=1, column=0, columnspan=3)
         return
 
@@ -95,6 +98,7 @@ def submit():
         error_message.configure(text="Mot de passe manquant.")
         progress.grid_forget()
         progress_text.grid_forget()
+        submit_button.configure(pady=(30, 30))
         error_message.grid(row=1, column=0, columnspan=3)
         return
 
@@ -109,6 +113,7 @@ def submit():
         )
         progress.grid_forget()
         progress_text.grid_forget()
+        submit_button.configure(pady=(30, 30))
         error_message.grid(row=1, column=0, columnspan=3)
         return
 
@@ -117,8 +122,9 @@ def submit():
         error_message.grid_forget()
 
         progress.set(0)
-        progress_text.grid(row=11, column=0, columnspan=3)
-        progress.grid(row=12, column=0, columnspan=3, pady=(0, 30))
+        progress_text.grid(row=13, column=0, columnspan=3)
+        progress.grid(row=14, column=0, columnspan=3, pady=(0, 30))
+        submit_button.configure(pady=(30, 10))
 
         # Save the email
         save_settings(email, startdate)
@@ -130,7 +136,7 @@ def submit():
             progressbar=progress,
             progresstext=progress_text,
             root=root,
-            activitytype="",
+            activitytype=activity_type,
         )
         message = (
             "Activités téléchargées avec succès.\n\n"
@@ -144,6 +150,7 @@ def submit():
         )
         progress.grid_forget()
         progress_text.grid_forget()
+        submit_button.configure(pady=(30, 30))
         error_message.grid(row=1, column=0, columnspan=3)
 
 
@@ -255,8 +262,24 @@ end_day.grid(row=9, column=0, sticky="W", padx=(50, 0))
 end_month.grid(row=9, column=1, sticky="W")
 end_year.grid(row=9, column=2, sticky="W", padx=(0, 50))
 
+# After the end_date ComboBox
+activity_type_label = CTkLabel(root, text="Type d'activité :")
+activity_type_label.grid(row=10, column=0, columnspan=3, pady=(10, 0))
+
+activity_types = {
+    "Toutes activités": "",
+    "Course": "running",
+    "Vélo": "cycling",
+    "Natation": "swimming",
+}
+activity_type_combobox = CTkComboBox(
+    root, values=list(activity_types.keys()), width=15
+)
+activity_type_combobox.set("Toutes activités")  # Set default value to "All"
+activity_type_combobox.grid(row=11, column=0, columnspan=3, pady=(0, 10), ipadx=60)
+
 submit_button = CTkButton(root, text="Télécharger", command=submit)
-submit_button.grid(row=10, column=0, columnspan=3, pady=(30, 30), ipadx=80)
+submit_button.grid(row=12, column=0, columnspan=3, pady=(30, 30), ipadx=80)
 
 progress_text = CTkLabel(root, text="")
 
