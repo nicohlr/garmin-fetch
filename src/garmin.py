@@ -49,10 +49,11 @@ def update_days_combobox(combobox_day, combobox_month, combobox_year):
     root.update_idletasks()
 
 
-def save_settings(email, start_date):
+def save_settings(email, start_date, activity_type):
     with open("settings.txt", "w") as f:
         f.write(email + "\n")
         f.write(start_date)
+        f.write(activity_type)
 
 
 def load_settings():
@@ -61,9 +62,10 @@ def load_settings():
             lines = f.readlines()
             email = lines[0].strip()
             start_date = lines[1].strip() if len(lines) > 1 else None
-            return email, start_date
+            activity_type = lines[2].strip() if len(lines) > 2 else None
+            return email, start_date, activity_type
     except FileNotFoundError:
-        return None, None
+        return None, None, None
 
 
 def submit():
@@ -126,8 +128,7 @@ def submit():
         progress.grid(row=14, column=0, columnspan=3, pady=(0, 30))
         submit_button.configure(pady=(30, 10))
 
-        # Save the email
-        save_settings(email, startdate)
+        save_settings(email, startdate, selected_activity)
 
         filename = get_activities(
             api=api,
@@ -175,7 +176,7 @@ email_label = CTkLabel(root, text="Email :")
 email_label.grid(row=2, column=0, columnspan=3, pady=(10, 0))
 
 email_entry = CTkEntry(root)
-email, saved_start_date = load_settings()
+email, saved_start_date, saved_activity_type = load_settings()
 
 if email:
     email_entry.insert(0, email)
@@ -275,8 +276,12 @@ activity_types = {
 activity_type_combobox = CTkComboBox(
     root, values=list(activity_types.keys()), width=15
 )
-activity_type_combobox.set("Toutes activités")  # Set default value to "All"
-activity_type_combobox.grid(row=11, column=0, columnspan=3, pady=(0, 10), ipadx=60)
+activity_type_combobox.set(
+    saved_activity_type if saved_activity_type else "Toutes activités"
+)
+activity_type_combobox.grid(
+    row=11, column=0, columnspan=3, pady=(0, 10), ipadx=60
+)
 
 submit_button = CTkButton(root, text="Télécharger", command=submit)
 submit_button.grid(row=12, column=0, columnspan=3, pady=(30, 30), ipadx=80)
