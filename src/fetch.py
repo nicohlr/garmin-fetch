@@ -5,6 +5,7 @@ import hashlib
 import pickle
 
 from utils import get_activities, init_api
+from datetime import datetime
 
 
 def save_credentials(email, password):
@@ -42,10 +43,12 @@ if __name__ == "__main__":
 
     api = init_api(email=email, password=password)
 
+    startdate = "1900-01-01"  # very old startdate
+    enddate = datetime.now().strftime('%Y-%m-%d')  # current date
+
     get_activities(
         api=api,
         startdate=params["startdate"],
         enddate=params["enddate"],
-        dest_folder="./activities/",
         activitytype="",
     )

@@ -14,7 +14,7 @@ def init_api(email, password):
     return api
 
 
-def get_activities(api, startdate, enddate, dest_folder, activitytype=""):
+def get_activities(api, startdate, enddate, activitytype=""):
     """Get activities data from startdate 'YYYY-MM-DD' to enddate 'YYYY-MM-DD',
 
     Args:
