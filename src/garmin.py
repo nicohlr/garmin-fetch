@@ -160,11 +160,15 @@ def submit():
 root = CTk()
 root.title("Téléchargement d'activités Garmin")
 
-base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-image_path = os.path.join(base_path, 'imgs', 'your_image.png')
 
-img_light = Image.open("imgs/garmin_lightmode.png")
-img_dark = Image.open("imgs/garmin_darkmode.png").resize(img_light.size)
+base_path = getattr(
+    sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__))
+)
+img_light_path = os.path.join(base_path, "imgs", "garmin_lightmode.png")
+img_dark_path = os.path.join(base_path, "imgs", "garmin_darkmode.png")
+
+img_light = Image.open(img_light_path)
+img_dark = Image.open(img_dark_path).resize(img_light.size)
 
 garmin_logo = CTkImage(
     light_image=img_light,
