@@ -117,7 +117,7 @@ def post_init(
             error_message.configure(text=f"Erreur inattendue: {str(error)}")
         progress.grid_forget()
         progress_text.grid_forget()
-        submit_button.grid_configure(pady=(20, 40))
+        submit_button.grid_configure(pady=(20, 60))
         error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
 
@@ -154,7 +154,7 @@ def submit():
         error_message.configure(text="Email manquant.")
         progress.grid_forget()
         progress_text.grid_forget()
-        submit_button.grid_configure(pady=(20, 40))
+        submit_button.grid_configure(pady=(20, 60))
         error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
 
@@ -163,7 +163,7 @@ def submit():
         error_message.configure(text="Email invalide.")
         progress.grid_forget()
         progress_text.grid_forget()
-        submit_button.grid_configure(pady=(20, 40))
+        submit_button.grid_configure(pady=(20, 60))
         error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
 
@@ -172,7 +172,7 @@ def submit():
         error_message.configure(text="Mot de passe manquant.")
         progress.grid_forget()
         progress_text.grid_forget()
-        submit_button.grid_configure(pady=(20, 40))
+        submit_button.grid_configure(pady=(20, 60))
         error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
 
@@ -187,7 +187,7 @@ def submit():
         )
         progress.grid_forget()
         progress_text.grid_forget()
-        submit_button.grid_configure(pady=(20, 40))
+        submit_button.grid_configure(pady=(20, 60))
         error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
 
@@ -383,13 +383,15 @@ activity_type_combobox.grid(
     padx=60,
 )
 
-submit_button = CTkButton(root, text="Télécharger ↓", command=submit)
+submit_button = CTkButton(
+    root, text="Télécharger les activités ↓", command=submit
+)
 submit_button.grid(
     sticky="ew",
     row=12,
     column=0,
     columnspan=3,
-    pady=(20, 40),
+    pady=(20, 60),
     ipadx=70,
     padx=60,
 )
