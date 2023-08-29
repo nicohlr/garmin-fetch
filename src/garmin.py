@@ -117,7 +117,7 @@ def post_init(
             error_message.configure(text=f"Erreur inattendue: {str(error)}")
         progress.grid_forget()
         progress_text.grid_forget()
-        submit_button.grid_configure(pady=(30, 30))
+        submit_button.grid_configure(pady=(10, 40))
         error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
 
@@ -154,7 +154,7 @@ def submit():
         error_message.configure(text="Email manquant.")
         progress.grid_forget()
         progress_text.grid_forget()
-        submit_button.grid_configure(pady=(30, 30))
+        submit_button.grid_configure(pady=(10, 40))
         error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
 
@@ -163,7 +163,7 @@ def submit():
         error_message.configure(text="Email invalide.")
         progress.grid_forget()
         progress_text.grid_forget()
-        submit_button.grid_configure(pady=(30, 30))
+        submit_button.grid_configure(pady=(10, 40))
         error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
 
@@ -172,7 +172,7 @@ def submit():
         error_message.configure(text="Mot de passe manquant.")
         progress.grid_forget()
         progress_text.grid_forget()
-        submit_button.grid_configure(pady=(30, 30))
+        submit_button.grid_configure(pady=(10, 40))
         error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
 
@@ -187,7 +187,7 @@ def submit():
         )
         progress.grid_forget()
         progress_text.grid_forget()
-        submit_button.grid_configure(pady=(30, 30))
+        submit_button.grid_configure(pady=(10, 40))
         error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
 
@@ -196,7 +196,9 @@ def submit():
     progress_text.configure(text="Connexion à l'API Garmin en cours ...")
     progress["mode"] = "indeterminate"
     progress_text.grid(sticky="ew", row=13, column=0, columnspan=3)
-    progress.grid(sticky="ew", row=14, column=0, columnspan=3, pady=(0, 30), padx=40)
+    progress.grid(
+        sticky="ew", row=14, column=0, columnspan=3, pady=(0, 30), padx=40
+    )
     submit_button.grid_configure(pady=(30, 10))
 
     progress.start()
@@ -226,6 +228,12 @@ root.resizable(False, False)
 root.grid_columnconfigure(0, weight=1)  # left padding column
 root.grid_columnconfigure(1, weight=2)  # main content column
 root.grid_columnconfigure(2, weight=1)  # right padding column
+
+# Configure row weights
+root.grid_rowconfigure(1, weight=1)
+root.grid_rowconfigure(13, weight=1)
+root.grid_rowconfigure(14, weight=1)
+
 
 if getattr(sys, "frozen", False):
     # we are running in a bundle
@@ -383,7 +391,7 @@ submit_button.grid(
     row=12,
     column=0,
     columnspan=3,
-    pady=(30, 30),
+    pady=(10, 40),
     ipadx=70,
     padx=40,
 )
