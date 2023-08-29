@@ -227,22 +227,22 @@ else:
     # we are running in a normal Python environment
     bundle_dir = os.path.dirname(os.path.abspath(__file__))
 
-icon_path = os.path.join(os.path.dirname(bundle_dir), "imgs", "garmin-download.ico")
-icon_path_png = os.path.join(os.path.dirname(bundle_dir), "imgs", "garmin-download.png")
-img_light_path = os.path.join(
-    os.path.dirname(bundle_dir), "imgs", "garmin_lightmode.png"
-)
-img_dark_path = os.path.join(
-    os.path.dirname(bundle_dir), "imgs", "garmin_darkmode.png"
-)
-
 root = CTk()
 root.title("Téléchargement d'activités Garmin Connect")
 root.resizable(False, False)
 
-ico = Image.open(icon_path_png)
-photo = ImageTk.PhotoImage(ico)
-root.iconphoto(False, photo)
+icon_path_ico = os.path.join(
+    os.path.dirname(bundle_dir), "imgs", "garmin-download.ico"
+)
+icon_path_png = os.path.join(
+    os.path.dirname(bundle_dir), "imgs", "garmin-download.png"
+)
+
+if os.name == "nt":
+    root.iconbitmap(icon_path_ico)
+else:
+    iconpil = ImageTk.PhotoImage(Image.open(icon_path_png))
+    root.iconphoto(False, iconpil)
 
 # Configure column weights
 root.grid_columnconfigure(0, weight=1)  # left padding column
@@ -252,6 +252,13 @@ root.grid_columnconfigure(2, weight=1)  # right padding column
 # Configure row weights
 for i in range(1, 15):
     root.grid_rowconfigure(i, weight=1)
+
+img_light_path = os.path.join(
+    os.path.dirname(bundle_dir), "imgs", "garmin_lightmode.png"
+)
+img_dark_path = os.path.join(
+    os.path.dirname(bundle_dir), "imgs", "garmin_darkmode.png"
+)
 
 img_light = Image.open(img_light_path)
 img_dark = Image.open(img_dark_path).resize(img_light.size)
