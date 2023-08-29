@@ -1,5 +1,6 @@
 import os
 import sys
+import threading
 import customtkinter
 
 from datetime import datetime
@@ -54,7 +55,7 @@ def update_days_combobox(combobox_day, combobox_month, combobox_year):
 def save_settings(email, start_date, activity_type):
     with open("settings.txt", "w") as f:
         f.write(email + "\n")
-        f.write(start_date)
+        f.write(start_date + "\n")
         f.write(activity_type)
 
 
@@ -68,6 +69,47 @@ def load_settings():
             return email, start_date, activity_type
     except FileNotFoundError:
         return None, None, None
+
+
+def init_api_and_followup(
+    email, password, startdate, enddate, activity_type, selected_activity
+):
+    api = init_api(email=email, password=password)
+    root.after(
+        0,
+        post_init,
+        api,
+        email,
+        startdate,
+        enddate,
+        activity_type,
+        selected_activity,
+    )
+
+
+def post_init(
+    api, email, startdate, enddate, activity_type, selected_activity
+):
+    progress.stop()
+    progress["mode"] = "determinate"
+    progress_text.configure(text="")
+
+    save_settings(email, startdate, selected_activity)
+
+    filename = get_activities(
+        api=api,
+        startdate=startdate,
+        enddate=enddate,
+        progressbar=progress,
+        progresstext=progress_text,
+        root=root,
+        activitytype=activity_type,
+    )
+    message = (
+        "Activités téléchargées avec succès.\n\n"
+        + f"Le fichier est déposé au chemin suivant :\n\n{filename}"
+    )
+    messagebox.showinfo("Succès", message)
 
 
 def submit():
@@ -123,30 +165,31 @@ def submit():
         return
 
     try:
-        api = init_api(email=email, password=password)
         error_message.grid_forget()
 
-        progress.set(0)
+        progress_text.configure(text="Connexion à l'API Garmin en cours ...")
+        progress["mode"] = "indeterminate"
         progress_text.grid(row=13, column=0, columnspan=3)
         progress.grid(row=14, column=0, columnspan=3, pady=(0, 30))
         submit_button.grid_configure(pady=(30, 10))
 
-        save_settings(email, startdate, selected_activity)
+        progress.start()
+        root.update_idletasks()
 
-        filename = get_activities(
-            api=api,
-            startdate=startdate,
-            enddate=enddate,
-            progressbar=progress,
-            progresstext=progress_text,
-            root=root,
-            activitytype=activity_type,
+        # api = init_api(email=email, password=password)
+        # Use threading to run the lengthy function without blocking the GUI
+        thread = threading.Thread(
+            target=init_api_and_followup,
+            args=(
+                email,
+                password,
+                startdate,
+                enddate,
+                activity_type,
+                selected_activity,
+            ),
         )
-        message = (
-            "Activités téléchargées avec succès.\n\n"
-            + f"Le fichier est déposé au chemin suivant :\n\n{filename}"
-        )
-        messagebox.showinfo("Succès", message)
+        thread.start()
 
     except GarminConnectAuthenticationError:
         error_message.configure(
@@ -307,7 +350,12 @@ submit_button.grid(row=12, column=0, columnspan=3, pady=(30, 30), ipadx=80)
 progress_text = CTkLabel(root, text="")
 
 progress = CTkProgressBar(
-    root, orientation="horizontal", width=300, height=15, mode="determinate"
+    root,
+    orientation="horizontal",
+    width=300,
+    height=15,
+    mode="determinate",
+    indeterminate_speed=10,
 )
 
 root.mainloop()

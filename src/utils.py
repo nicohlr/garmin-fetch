@@ -38,6 +38,7 @@ def get_activities(
     activities_data = pd.DataFrame()
 
     iter_count = 1
+    progressbar.set(0)
 
     # Download activities
     for activity in activities:
