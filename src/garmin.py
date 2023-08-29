@@ -85,6 +85,7 @@ def submit():
         error_message.configure(text="Email manquant.")
         progress.grid_forget()
         progress_text.grid_forget()
+        submit_button.grid_configure(pady=(30, 30))
         error_message.grid(row=1, column=0, columnspan=3)
         return
 
@@ -93,7 +94,7 @@ def submit():
         error_message.configure(text="Email invalide.")
         progress.grid_forget()
         progress_text.grid_forget()
-        submit_button.configure(pady=(30, 30))
+        submit_button.grid_configure(pady=(30, 30))
         error_message.grid(row=1, column=0, columnspan=3)
         return
 
@@ -102,7 +103,7 @@ def submit():
         error_message.configure(text="Mot de passe manquant.")
         progress.grid_forget()
         progress_text.grid_forget()
-        submit_button.configure(pady=(30, 30))
+        submit_button.grid_configure(pady=(30, 30))
         error_message.grid(row=1, column=0, columnspan=3)
         return
 
@@ -117,7 +118,7 @@ def submit():
         )
         progress.grid_forget()
         progress_text.grid_forget()
-        submit_button.configure(pady=(30, 30))
+        submit_button.grid_configure(pady=(30, 30))
         error_message.grid(row=1, column=0, columnspan=3)
         return
 
@@ -128,7 +129,7 @@ def submit():
         progress.set(0)
         progress_text.grid(row=13, column=0, columnspan=3)
         progress.grid(row=14, column=0, columnspan=3, pady=(0, 30))
-        submit_button.configure(pady=(30, 10))
+        submit_button.grid_configure(pady=(30, 10))
 
         save_settings(email, startdate, selected_activity)
 
@@ -153,7 +154,7 @@ def submit():
         )
         progress.grid_forget()
         progress_text.grid_forget()
-        submit_button.configure(pady=(30, 30))
+        submit_button.grid_configure(pady=(30, 30))
         error_message.grid(row=1, column=0, columnspan=3)
 
 
@@ -161,11 +162,19 @@ root = CTk()
 root.title("Téléchargement d'activités Garmin")
 
 
-base_path = getattr(
-    sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__))
+if getattr(sys, "frozen", False):
+    # we are running in a bundle
+    bundle_dir = os.path.dirname(sys.executable)
+else:
+    # we are running in a normal Python environment
+    bundle_dir = os.path.dirname(os.path.abspath(__file__))
+
+img_light_path = os.path.join(
+    os.path.dirname(bundle_dir), "imgs", "garmin_lightmode.png"
 )
-img_light_path = os.path.join(base_path, "imgs", "garmin_lightmode.png")
-img_dark_path = os.path.join(base_path, "imgs", "garmin_darkmode.png")
+img_dark_path = os.path.join(
+    os.path.dirname(bundle_dir), "imgs", "garmin_darkmode.png"
+)
 
 img_light = Image.open(img_light_path)
 img_dark = Image.open(img_dark_path).resize(img_light.size)
