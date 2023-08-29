@@ -64,6 +64,9 @@ def get_activities(
         root.update_idletasks()
         iter_count += 1
 
+    display_text = f"Téléchargement de {len(activities)} terminé !"
+    progresstext.configure(text=display_text)
+
     columns_order = [
         "Type d'activité",
         "Date",
