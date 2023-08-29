@@ -281,7 +281,7 @@ email_label = CTkLabel(root, text="Email :")
 email_label.grid(sticky="ew", row=2, column=0, columnspan=3, pady=(10, 0))
 
 email_entry = CTkEntry(root)
-email, saved_start_date, saved_activity_type = load_settings(bundle_dir)
+email, saved_start_date, saved_activity_type = load_settings()
 
 if email:
     email_entry.insert(0, email)
