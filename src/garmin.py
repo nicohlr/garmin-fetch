@@ -64,7 +64,8 @@ def save_settings(email, start_date, activity_type):
 
 def load_settings():
     try:
-        with open("settings.txt", "r") as f:
+        path = os.path.join(bundle_dir, "settings.txt")
+        with open(path, "r") as f:
             lines = f.readlines()
             email = lines[0].strip()
             start_date = lines[1].strip() if len(lines) > 1 else None
@@ -278,7 +279,7 @@ email_label = CTkLabel(root, text="Email :")
 email_label.grid(sticky="ew", row=2, column=0, columnspan=3, pady=(10, 0))
 
 email_entry = CTkEntry(root)
-email, saved_start_date, saved_activity_type = load_settings()
+email, saved_start_date, saved_activity_type = load_settings(bundle_dir)
 
 if email:
     email_entry.insert(0, email)
