@@ -220,9 +220,19 @@ def submit():
     thread.start()
 
 
+if getattr(sys, "frozen", False):
+    # we are running in a bundle
+    bundle_dir = os.path.dirname(sys.executable)
+else:
+    # we are running in a normal Python environment
+    bundle_dir = os.path.dirname(os.path.abspath(__file__))
+
+icon_path = os.path.join(os.path.dirname(bundle_dir), "imgs", "garmin.ico")
+
 root = CTk()
-root.title("Téléchargement d'activités Garmin")
+root.title("Téléchargement d'activités Garmin Connect")
 root.resizable(False, False)
+root.iconbitmap(icon_path)
 
 # Configure column weights
 root.grid_columnconfigure(0, weight=1)  # left padding column
@@ -233,12 +243,6 @@ root.grid_columnconfigure(2, weight=1)  # right padding column
 for i in range(1, 15):
     root.grid_rowconfigure(i, weight=1)
 
-if getattr(sys, "frozen", False):
-    # we are running in a bundle
-    bundle_dir = os.path.dirname(sys.executable)
-else:
-    # we are running in a normal Python environment
-    bundle_dir = os.path.dirname(os.path.abspath(__file__))
 
 img_light_path = os.path.join(
     os.path.dirname(bundle_dir), "imgs", "garmin_lightmode.png"
