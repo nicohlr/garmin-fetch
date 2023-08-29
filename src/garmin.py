@@ -1,5 +1,6 @@
 import os
 import sys
+import pathlib
 import threading
 import customtkinter
 
@@ -55,17 +56,17 @@ def update_days_combobox(combobox_day, combobox_month, combobox_year):
     root.update_idletasks()
 
 
-def save_settings(bundle_dir, email, start_date, activity_type):
-    path = os.path.join(bundle_dir, "settings.txt")
+def save_settings(email, start_date, activity_type):
+    path = os.path.join(pathlib.Path.home(), "settings-garmin-download.txt")
     with open(path, "w") as f:
         f.write(email + "\n")
         f.write(start_date + "\n")
         f.write(activity_type)
 
 
-def load_settings(bundle_dir):
+def load_settings():
     try:
-        path = os.path.join(bundle_dir, "settings.txt")
+        path = os.path.join(pathlib.Path.home(), "settings-garmin-download.txt")
         with open(path, "r") as f:
             lines = f.readlines()
             email = lines[0].strip()
@@ -77,7 +78,7 @@ def load_settings(bundle_dir):
 
 
 def init_api_and_followup(
-    email, password, startdate, enddate, activity_type, selected_activity, bundle_dir
+    email, password, startdate, enddate, activity_type, selected_activity
 ):
     try:
         api = init_api(email=email, password=password)
@@ -96,18 +97,17 @@ def init_api_and_followup(
         activity_type,
         selected_activity,
         error,
-        bundle_dir
     )
 
 
 def post_init(
-    api, email, startdate, enddate, activity_type, selected_activity, error, bundle_dir
+    api, email, startdate, enddate, activity_type, selected_activity, error,
 ):
     progress.stop()
     progress["mode"] = "determinate"
     progress_text.configure(text="")
 
-    save_settings(bundle_dir, email, startdate, selected_activity)
+    save_settings(email, startdate, selected_activity)
 
     if error:
         if isinstance(error, GarminConnectAuthenticationError):
@@ -218,7 +218,6 @@ def submit():
             enddate,
             activity_type,
             selected_activity,
-            bundle_dir
         ),
     )
     thread.start()
