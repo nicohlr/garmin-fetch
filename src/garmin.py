@@ -93,7 +93,7 @@ def init_api_and_followup(
         enddate,
         activity_type,
         selected_activity,
-        error
+        error,
     )
 
 
@@ -114,13 +114,11 @@ def post_init(
                 text="Trop de requêtes à Garmin Connect.\nVeuillez réessayer plus tard."
             )
         else:
-            error_message.configure(
-                text=f"Erreur inattendue: {str(error)}"
-            )
+            error_message.configure(text=f"Erreur inattendue: {str(error)}")
         progress.grid_forget()
         progress_text.grid_forget()
         submit_button.grid_configure(pady=(30, 30))
-        error_message.grid(row=1, column=0, columnspan=3)
+        error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
 
     save_settings(email, startdate, selected_activity)
@@ -157,7 +155,7 @@ def submit():
         progress.grid_forget()
         progress_text.grid_forget()
         submit_button.grid_configure(pady=(30, 30))
-        error_message.grid(row=1, column=0, columnspan=3)
+        error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
 
     # Check email validity
@@ -166,7 +164,7 @@ def submit():
         progress.grid_forget()
         progress_text.grid_forget()
         submit_button.grid_configure(pady=(30, 30))
-        error_message.grid(row=1, column=0, columnspan=3)
+        error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
 
     # Check if password is empty
@@ -175,7 +173,7 @@ def submit():
         progress.grid_forget()
         progress_text.grid_forget()
         submit_button.grid_configure(pady=(30, 30))
-        error_message.grid(row=1, column=0, columnspan=3)
+        error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
 
     # Convert the start and end dates to datetime objects for comparison
@@ -190,15 +188,15 @@ def submit():
         progress.grid_forget()
         progress_text.grid_forget()
         submit_button.grid_configure(pady=(30, 30))
-        error_message.grid(row=1, column=0, columnspan=3)
+        error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
 
     error_message.grid_forget()
 
     progress_text.configure(text="Connexion à l'API Garmin en cours ...")
     progress["mode"] = "indeterminate"
-    progress_text.grid(row=13, column=0, columnspan=3)
-    progress.grid(row=14, column=0, columnspan=3, pady=(0, 30))
+    progress_text.grid(sticky="ew", row=13, column=0, columnspan=3)
+    progress.grid(sticky="ew", row=14, column=0, columnspan=3, pady=(0, 30), padx=40)
     submit_button.grid_configure(pady=(30, 10))
 
     progress.start()
@@ -222,7 +220,12 @@ def submit():
 
 root = CTk()
 root.title("Téléchargement d'activités Garmin")
+root.resizable(False, False)
 
+# Configure column weights
+root.grid_columnconfigure(0, weight=1)  # left padding column
+root.grid_columnconfigure(1, weight=2)  # main content column
+root.grid_columnconfigure(2, weight=1)  # right padding column
 
 if getattr(sys, "frozen", False):
     # we are running in a bundle
@@ -248,12 +251,12 @@ garmin_logo = CTkImage(
 )
 
 image_label = CTkLabel(root, image=garmin_logo, text="")
-image_label.grid(row=0, column=0, columnspan=3, pady=(20, 20))
+image_label.grid(sticky="ew", row=0, column=0, columnspan=3, pady=(20, 20))
 
 error_message = CTkLabel(root, text="", text_color="red")
 
 email_label = CTkLabel(root, text="Email :")
-email_label.grid(row=2, column=0, columnspan=3, pady=(10, 0))
+email_label.grid(sticky="ew", row=2, column=0, columnspan=3, pady=(10, 0))
 
 email_entry = CTkEntry(root)
 email, saved_start_date, saved_activity_type = load_settings()
@@ -261,21 +264,21 @@ email, saved_start_date, saved_activity_type = load_settings()
 if email:
     email_entry.insert(0, email)
 email_entry.grid(
-    row=3, column=0, columnspan=3, pady=(0, 10), ipadx=80, padx=20
+    sticky="ew", row=3, column=0, columnspan=3, pady=(0, 10), ipadx=70, padx=40
 )
 
 password_label = CTkLabel(root, text="Mot de passe :")
-password_label.grid(row=4, column=0, columnspan=3, pady=(10, 0))
+password_label.grid(sticky="ew", row=4, column=0, columnspan=3, pady=(10, 0))
 
 password_entry = CTkEntry(root, show="*")
 password_entry.grid(
-    row=5, column=0, columnspan=3, pady=(0, 10), ipadx=80, padx=20
+    sticky="ew", row=5, column=0, columnspan=3, pady=(0, 10), ipadx=70, padx=40
 )
 
 current_year = datetime.now().year
 
 startdate_label = CTkLabel(root, text="Date de début (JJ-MM-AAAA) :")
-startdate_label.grid(row=6, column=0, columnspan=3, pady=(10, 0))
+startdate_label.grid(sticky="ew", row=6, column=0, columnspan=3, pady=(10, 0))
 
 start_day = CTkComboBox(
     root,
@@ -309,13 +312,15 @@ else:
     start_day.set("01")
 
 
-start_day.grid(row=7, column=0, sticky="W", padx=(50, 0))
-start_month.grid(row=7, column=1, sticky="W")
-start_year.grid(row=7, column=2, sticky="W", padx=(0, 50))
+start_day.grid(row=7, column=0, sticky="EW", padx=(60, 10))
+start_month.grid(row=7, column=1, sticky="EW", padx=(10, 10))
+start_year.grid(row=7, column=2, sticky="EW", padx=(10, 60))
 
 # create comboboxes for end date
 enddate_label = CTkLabel(root, text="Date de fin (JJ-MM-AAAA) :")
-enddate_label.grid(row=8, column=0, columnspan=3, pady=(10, 0), ipadx=90)
+enddate_label.grid(
+    sticky="ew", row=8, column=0, columnspan=3, pady=(10, 0), ipadx=90
+)
 
 end_day = CTkComboBox(
     root,
@@ -339,13 +344,16 @@ end_year = CTkComboBox(
 )
 end_year.set(current_year)
 
-end_day.grid(row=9, column=0, sticky="W", padx=(50, 0))
-end_month.grid(row=9, column=1, sticky="W")
-end_year.grid(row=9, column=2, sticky="W", padx=(0, 50))
+end_day.grid(row=9, column=0, sticky="EW", padx=(60, 10))
+end_month.grid(row=9, column=1, sticky="EW", padx=(10, 10))
+end_year.grid(row=9, column=2, sticky="EW", padx=(10, 60))
+
 
 # After the end_date ComboBox
 activity_type_label = CTkLabel(root, text="Type d'activité :")
-activity_type_label.grid(row=10, column=0, columnspan=3, pady=(10, 0))
+activity_type_label.grid(
+    sticky="ew", row=10, column=0, columnspan=3, pady=(10, 0)
+)
 
 activity_types = {
     "Toutes activités": "",
@@ -360,18 +368,32 @@ activity_type_combobox.set(
     saved_activity_type if saved_activity_type else "Toutes activités"
 )
 activity_type_combobox.grid(
-    row=11, column=0, columnspan=3, pady=(0, 10), ipadx=80
+    sticky="ew",
+    row=11,
+    column=0,
+    columnspan=3,
+    pady=(0, 10),
+    ipadx=70,
+    padx=40,
 )
 
 submit_button = CTkButton(root, text="Télécharger", command=submit)
-submit_button.grid(row=12, column=0, columnspan=3, pady=(30, 30), ipadx=80)
+submit_button.grid(
+    sticky="ew",
+    row=12,
+    column=0,
+    columnspan=3,
+    pady=(30, 30),
+    ipadx=70,
+    padx=40,
+)
 
 progress_text = CTkLabel(root, text="")
 
 progress = CTkProgressBar(
     root,
     orientation="horizontal",
-    width=300,
+    width=30,
     height=15,
     mode="determinate",
     indeterminate_speed=10,
