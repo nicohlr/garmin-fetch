@@ -190,7 +190,7 @@ def submit():
         )
         progress.grid_forget()
         progress_text.grid_forget()
-        submit_button.grid_configure(pady=(20, 60))
+        submit_button.grid_configure(pady=(0, 60))
         error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
 
@@ -198,9 +198,9 @@ def submit():
 
     progress_text.configure(text="Connexion à l'API Garmin en cours ...")
     progress["mode"] = "indeterminate"
-    progress_text.grid(sticky="ew", row=13, column=0, columnspan=3)
+    progress_text.grid(sticky="ew", row=13, column=0, columnspan=3, pady=(10, 0))
     progress.grid(
-        sticky="ew", row=14, column=0, columnspan=3, pady=(0, 30), padx=40
+        sticky="ew", row=14, column=0, columnspan=3, pady=(0, 50), padx=40
     )
     submit_button.grid_configure(pady=(30, 10))
 
