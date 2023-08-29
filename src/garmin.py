@@ -66,7 +66,9 @@ def save_settings(email, start_date, activity_type):
 
 def load_settings():
     try:
-        path = os.path.join(pathlib.Path.home(), "settings-garmin-download.txt")
+        path = os.path.join(
+            pathlib.Path.home(), "settings-garmin-download.txt"
+        )
         with open(path, "r") as f:
             lines = f.readlines()
             email = lines[0].strip()
@@ -101,7 +103,13 @@ def init_api_and_followup(
 
 
 def post_init(
-    api, email, startdate, enddate, activity_type, selected_activity, error,
+    api,
+    email,
+    startdate,
+    enddate,
+    activity_type,
+    selected_activity,
+    error,
 ):
     progress.stop()
     progress["mode"] = "determinate"
@@ -198,7 +206,9 @@ def submit():
 
     progress_text.configure(text="Connexion à l'API Garmin en cours ...")
     progress["mode"] = "indeterminate"
-    progress_text.grid(sticky="ew", row=13, column=0, columnspan=3, pady=(10, 0))
+    progress_text.grid(
+        sticky="ew", row=13, column=0, columnspan=3, pady=(10, 0)
+    )
     progress.grid(
         sticky="ew", row=14, column=0, columnspan=3, pady=(0, 50), padx=40
     )
@@ -228,18 +238,16 @@ if getattr(sys, "frozen", False):
     bundle_dir = sys._MEIPASS
 else:
     # we are running in a normal Python environment
-    bundle_dir = os.path.dirname(os.path.abspath(__file__))
+    file_dir = os.path.dirname(os.path.abspath(__file__))
+    bundle_dir = os.path.dirname(file_dir)
+
 
 root = CTk()
 root.title("Téléchargement d'activités Garmin Connect")
 root.resizable(False, False)
 
-icon_path_ico = os.path.join(
-    os.path.dirname(bundle_dir), "imgs", "garmin-download.ico"
-)
-icon_path_png = os.path.join(
-    os.path.dirname(bundle_dir), "imgs", "garmin-download.png"
-)
+icon_path_ico = os.path.join(bundle_dir, "imgs", "garmin-download.ico")
+icon_path_png = os.path.join(bundle_dir, "imgs", "garmin-download.png")
 
 if os.name == "nt":
     root.iconbitmap(icon_path_ico)
@@ -256,12 +264,8 @@ root.grid_columnconfigure(2, weight=1)  # right padding column
 for i in range(1, 15):
     root.grid_rowconfigure(i, weight=1)
 
-img_light_path = os.path.join(
-    os.path.dirname(bundle_dir), "imgs", "garmin_lightmode.png"
-)
-img_dark_path = os.path.join(
-    os.path.dirname(bundle_dir), "imgs", "garmin_darkmode.png"
-)
+img_light_path = os.path.join(bundle_dir, "imgs", "garmin_lightmode.png")
+img_dark_path = os.path.join(bundle_dir, "imgs", "garmin_darkmode.png")
 
 img_light = Image.open(img_light_path)
 img_dark = Image.open(img_dark_path).resize(img_light.size)
