@@ -225,7 +225,7 @@ def submit():
 
 if getattr(sys, "frozen", False):
     # we are running in a bundle
-    bundle_dir = os.path.dirname(sys.executable)
+    bundle_dir = sys._MEIPASS
 else:
     # we are running in a normal Python environment
     bundle_dir = os.path.dirname(os.path.abspath(__file__))
