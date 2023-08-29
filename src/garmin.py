@@ -62,7 +62,7 @@ def save_settings(email, start_date, activity_type):
         f.write(activity_type)
 
 
-def load_settings():
+def load_settings(bundle_dir):
     try:
         path = os.path.join(bundle_dir, "settings.txt")
         with open(path, "r") as f:
