@@ -18,7 +18,10 @@ from customtkinter import (
 from PIL import Image
 
 from utils import get_activities, init_api
-from garminconnect import GarminConnectAuthenticationError
+from garminconnect import (
+    GarminConnectAuthenticationError,
+    GarminConnectTooManyRequestsError,
+)
 
 
 customtkinter.set_appearance_mode("dark")
@@ -74,7 +77,13 @@ def load_settings():
 def init_api_and_followup(
     email, password, startdate, enddate, activity_type, selected_activity
 ):
-    api = init_api(email=email, password=password)
+    try:
+        api = init_api(email=email, password=password)
+        error = None
+    except Exception as e:
+        api = None
+        error = e
+
     root.after(
         0,
         post_init,
@@ -84,15 +93,35 @@ def init_api_and_followup(
         enddate,
         activity_type,
         selected_activity,
+        error
     )
 
 
 def post_init(
-    api, email, startdate, enddate, activity_type, selected_activity
+    api, email, startdate, enddate, activity_type, selected_activity, error
 ):
     progress.stop()
     progress["mode"] = "determinate"
     progress_text.configure(text="")
+
+    if error:
+        if isinstance(error, GarminConnectAuthenticationError):
+            error_message.configure(
+                text="Erreur d'authentification.\n Veuillez vérifier vos identifiants."
+            )
+        elif isinstance(error, GarminConnectTooManyRequestsError):
+            error_message.configure(
+                text="Trop de requêtes à Garmin Connect.\nVeuillez réessayer plus tard."
+            )
+        else:
+            error_message.configure(
+                text=f"Erreur inattendue: {str(error)}"
+            )
+        progress.grid_forget()
+        progress_text.grid_forget()
+        submit_button.grid_configure(pady=(30, 30))
+        error_message.grid(row=1, column=0, columnspan=3)
+        return
 
     save_settings(email, startdate, selected_activity)
 
@@ -164,41 +193,31 @@ def submit():
         error_message.grid(row=1, column=0, columnspan=3)
         return
 
-    try:
-        error_message.grid_forget()
+    error_message.grid_forget()
 
-        progress_text.configure(text="Connexion à l'API Garmin en cours ...")
-        progress["mode"] = "indeterminate"
-        progress_text.grid(row=13, column=0, columnspan=3)
-        progress.grid(row=14, column=0, columnspan=3, pady=(0, 30))
-        submit_button.grid_configure(pady=(30, 10))
+    progress_text.configure(text="Connexion à l'API Garmin en cours ...")
+    progress["mode"] = "indeterminate"
+    progress_text.grid(row=13, column=0, columnspan=3)
+    progress.grid(row=14, column=0, columnspan=3, pady=(0, 30))
+    submit_button.grid_configure(pady=(30, 10))
 
-        progress.start()
-        root.update_idletasks()
+    progress.start()
+    root.update_idletasks()
 
-        # api = init_api(email=email, password=password)
-        # Use threading to run the lengthy function without blocking the GUI
-        thread = threading.Thread(
-            target=init_api_and_followup,
-            args=(
-                email,
-                password,
-                startdate,
-                enddate,
-                activity_type,
-                selected_activity,
-            ),
-        )
-        thread.start()
-
-    except GarminConnectAuthenticationError:
-        error_message.configure(
-            text="Erreur d'authentification.\n Veuillez vérifier vos identifiants."
-        )
-        progress.grid_forget()
-        progress_text.grid_forget()
-        submit_button.grid_configure(pady=(30, 30))
-        error_message.grid(row=1, column=0, columnspan=3)
+    # api = init_api(email=email, password=password)
+    # Use threading to run the lengthy function without blocking the GUI
+    thread = threading.Thread(
+        target=init_api_and_followup,
+        args=(
+            email,
+            password,
+            startdate,
+            enddate,
+            activity_type,
+            selected_activity,
+        ),
+    )
+    thread.start()
 
 
 root = CTk()
