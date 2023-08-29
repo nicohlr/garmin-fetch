@@ -55,8 +55,9 @@ def update_days_combobox(combobox_day, combobox_month, combobox_year):
     root.update_idletasks()
 
 
-def save_settings(email, start_date, activity_type):
-    with open("settings.txt", "w") as f:
+def save_settings(bundle_dir, email, start_date, activity_type):
+    path = os.path.join(bundle_dir, "settings.txt")
+    with open(path, "w") as f:
         f.write(email + "\n")
         f.write(start_date + "\n")
         f.write(activity_type)
@@ -76,7 +77,7 @@ def load_settings(bundle_dir):
 
 
 def init_api_and_followup(
-    email, password, startdate, enddate, activity_type, selected_activity
+    email, password, startdate, enddate, activity_type, selected_activity, bundle_dir
 ):
     try:
         api = init_api(email=email, password=password)
@@ -95,15 +96,18 @@ def init_api_and_followup(
         activity_type,
         selected_activity,
         error,
+        bundle_dir
     )
 
 
 def post_init(
-    api, email, startdate, enddate, activity_type, selected_activity, error
+    api, email, startdate, enddate, activity_type, selected_activity, error, bundle_dir
 ):
     progress.stop()
     progress["mode"] = "determinate"
     progress_text.configure(text="")
+
+    save_settings(bundle_dir, email, startdate, selected_activity)
 
     if error:
         if isinstance(error, GarminConnectAuthenticationError):
@@ -121,8 +125,6 @@ def post_init(
         submit_button.grid_configure(pady=(20, 60))
         error_message.grid(sticky="ew", row=1, column=0, columnspan=3)
         return
-
-    save_settings(email, startdate, selected_activity)
 
     filename = get_activities(
         api=api,
@@ -216,6 +218,7 @@ def submit():
             enddate,
             activity_type,
             selected_activity,
+            bundle_dir
         ),
     )
     thread.start()
