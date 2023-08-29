@@ -230,10 +230,8 @@ root.grid_columnconfigure(1, weight=2)  # main content column
 root.grid_columnconfigure(2, weight=1)  # right padding column
 
 # Configure row weights
-root.grid_rowconfigure(1, weight=1)
-root.grid_rowconfigure(13, weight=1)
-root.grid_rowconfigure(14, weight=1)
-
+for i in range(1, 15):
+    root.grid_rowconfigure(i, weight=1)
 
 if getattr(sys, "frozen", False):
     # we are running in a bundle
