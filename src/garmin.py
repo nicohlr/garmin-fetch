@@ -15,7 +15,7 @@ from customtkinter import (
     CTkComboBox,
 )
 
-from PIL import Image
+from PIL import Image, ImageTk
 
 from utils import get_activities, init_api
 from garminconnect import (
@@ -232,7 +232,10 @@ icon_path = os.path.join(os.path.dirname(bundle_dir), "imgs", "garmin.ico")
 root = CTk()
 root.title("Téléchargement d'activités Garmin Connect")
 root.resizable(False, False)
-root.iconbitmap(icon_path)
+
+ico = Image.open(icon_path)
+photo = ImageTk.PhotoImage(ico)
+root.wm_iconphoto(False, photo)
 
 # Configure column weights
 root.grid_columnconfigure(0, weight=1)  # left padding column
