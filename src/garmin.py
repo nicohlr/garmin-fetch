@@ -246,8 +246,8 @@ root = CTk()
 root.title("Téléchargement d'activités Garmin Connect")
 root.resizable(False, False)
 
-icon_path_ico = os.path.join(bundle_dir, "imgs", "garmin-download.ico")
-icon_path_png = os.path.join(bundle_dir, "imgs", "garmin-download.png")
+icon_path_ico = os.path.join(bundle_dir, "assets", "garmin-download.ico")
+icon_path_png = os.path.join(bundle_dir, "assets", "garmin-download.png")
 
 if os.name == "nt":
     root.iconbitmap(icon_path_ico)
@@ -264,8 +264,8 @@ root.grid_columnconfigure(2, weight=1)  # right padding column
 for i in range(1, 15):
     root.grid_rowconfigure(i, weight=1)
 
-img_light_path = os.path.join(bundle_dir, "imgs", "garmin_lightmode.png")
-img_dark_path = os.path.join(bundle_dir, "imgs", "garmin_darkmode.png")
+img_light_path = os.path.join(bundle_dir, "assets", "garmin_lightmode.png")
+img_dark_path = os.path.join(bundle_dir, "assets", "garmin_darkmode.png")
 
 img_light = Image.open(img_light_path)
 img_dark = Image.open(img_dark_path).resize(img_light.size)
