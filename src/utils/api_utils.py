@@ -5,9 +5,20 @@ from garminconnect import Garmin
 
 from .data_utils import process_activities_data
 
+from customtkinter import CTk, CTkProgressBar, CTkLabel
 
-def init_api(email, password):
-    """Initialize Garmin API with your credentials."""
+
+def init_api(email: str, password: str) -> Garmin:
+    """
+    Initialize and log in to the Garmin API with the provided credentials.
+
+    Args:
+        email (str): The email address associated with the Garmin account.
+        password (str): The password associated with the Garmin account.
+
+    Returns:
+        Garmin: An authenticated Garmin API instance.
+    """
 
     api = Garmin(email, password)
     api.login()
@@ -16,17 +27,36 @@ def init_api(email, password):
 
 
 def get_activities(
-    api, startdate, enddate, progressbar, progresstext, root, activitytype=""
-):
-    """Get activities data from startdate 'YYYY-MM-DD' to enddate 'YYYY-MM-DD'.
+    api: Garmin,
+    startdate: str,
+    enddate: str,
+    progressbar: CTkProgressBar,
+    progresstext: CTkLabel,
+    root: CTk,
+    activitytype: str = "",
+) -> pd.DataFrame:
+    """
+    Get activities data from the Garmin API within a specified date range.
 
     Args:
-        api (Garmin): API request session.
-        startdate (str): Startdate 'YYYY-MM-DD' formatted.
-        enddate (str): Enddate 'YYYY-MM-DD' formatted.
-        activitytype (str): Types of activities to filter. Possible values
-            are: cycling, running, swimming, multi_sport, fitness_equipment,
-            hiking, walking, other. Default to "".
+        api (Garmin): Authenticated API session to the Garmin service.
+        startdate (str): Start date in the format 'YYYY-MM-DD' from which
+            activities are fetched.
+        enddate (str): End date in the format 'YYYY-MM-DD' until which
+            activities are fetched.
+        progressbar (CTkProgressBar): A progress bar widget to display
+            the progress of activities retrieval.
+        progresstext (CTkLabel): A label widget to display the progress
+            status text.
+        root (CTk): The main tkinter window or top-level window that
+            contains the widgets.
+        activitytype (str, optional): Type of activity to filter. Acceptable
+            values include: 'cycling', 'running', 'swimming', 'multi_sport',
+            'fitness_equipment', 'hiking', 'walking', and 'other'. Defaults to
+            an empty string, implying all activity types are fetched.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the activities data.
     """
 
     activities = api.get_activities_by_date(startdate, enddate, activitytype)

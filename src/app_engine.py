@@ -20,7 +20,15 @@ from customtkinter import (
 )
 
 
-def create_main_window():
+def create_main_window() -> None:
+    """
+    Create the main window for the Garmin activities download application.
+
+    Determines the path for the assets based on whether the application is
+    bundled (e.g., using PyInstaller) or running in a typical Python
+    environment. Sets up the main window, including the window's appearance,
+    title, and widgets.
+    """
     if getattr(sys, "frozen", False):
         # we are running in a bundle
         bundle_dir = sys._MEIPASS

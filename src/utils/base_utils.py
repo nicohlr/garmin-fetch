@@ -3,8 +3,20 @@ import sys
 import pathlib
 
 
-def days_in_month(month, year):
-    """Return the number of days in a given month and year."""
+def days_in_month(month: int, year: int) -> int:
+    """
+    Return the number of days in the specified month and year.
+
+    Args:
+        month (int): The month (1-12).
+        year (int): The year in YYYY format.
+
+    Returns:
+        int: The number of days in the given month and year.
+
+    Raises:
+        ValueError: If the provided month is not within 1-12 range.
+    """
     if month in [1, 3, 5, 7, 8, 10, 12]:
         return 31
     elif month in [4, 6, 9, 11]:
@@ -17,7 +29,15 @@ def days_in_month(month, year):
         raise ValueError("Invalid month")
 
 
-def save_settings(email, start_date, activity_type):
+def save_settings(email: str, start_date: str, activity_type: str) -> None:
+    """
+    Save the settings to a file in the user's home directory.
+
+    Args:
+        email (str): The email address.
+        start_date (str): The start date in the 'YYYY-MM-DD' format.
+        activity_type (str): The type of activity.
+    """
     path = os.path.join(pathlib.Path.home(), "settings-garmin-download.txt")
     with open(path, "w") as f:
         f.write(email + "\n")
@@ -25,7 +45,15 @@ def save_settings(email, start_date, activity_type):
         f.write(activity_type)
 
 
-def load_settings():
+def load_settings() -> tuple:
+    """
+    Load the settings from a file in the user's home directory.
+
+    Returns:
+        tuple: A tuple containing email (str), start_date (str or None),
+        and activity_type (str or None). If the file does not exist, all
+        values in the tuple are None.
+    """
     try:
         path = os.path.join(
             pathlib.Path.home(), "settings-garmin-download.txt"

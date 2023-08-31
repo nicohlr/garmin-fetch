@@ -1,3 +1,4 @@
+# Mappings
 ACTIVITY_TYPES_MAPPING = {
     "Toutes activités": "",
     "Course": "running",
@@ -5,12 +6,14 @@ ACTIVITY_TYPES_MAPPING = {
     "Natation": "swimming",
 }
 
+# Messages
 CONNECTION_LOADING_MSG = "Connexion à l'API Garmin en cours ..."
 SUCCESS_MSG = (
     "Activités téléchargées avec succès.\n\n"
     + "Le fichier est déposé au chemin suivant :\n\n"
 )
 
+# Errors
 DATE_ERROR = "La date de début ne peut pas être\npostérieure à la date de fin."
 MISSING_PASSWORD_ERROR = "Mot de passe manquant."
 WRONG_EMAIL_ERROR = "Email invalide."
