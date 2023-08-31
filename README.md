@@ -1,8 +1,8 @@
 # garmin-fetch
 
-Garmin-Fetch is a GUI application built on top of the [garminconnect python package](https://github.com/cyberjunky/python-garminconnect) to streamline the process of fetching activity data from Garmin Connect. Using a simple interface made using [Custom Tkinter](https://customtkinter.tomschimansky.com/), users can input their Garmin Connect credentials, specify a date range, and download their activity data with ease.
+Garmin-Fetch is a GUI application built on top of the [garminconnect](https://github.com/cyberjunky/python-garminconnect) python package to streamline the process of fetching activity data from Garmin Connect. Using a simple interface made using [customtkinter](https://customtkinter.tomschimansky.com/), users can input their Garmin Connect credentials, specify a date range, and download their activity data with ease.
 
-> **Disclaimer**
+> **Note**
 > For the moment, this application is only available in French.
 
 <p align="center">
