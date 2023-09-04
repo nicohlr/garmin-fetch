@@ -99,6 +99,9 @@ SUCCESS_MSG = (
     "Activités téléchargées avec succès.\n\n"
     + "Le fichier est déposé au chemin suivant :\n\n"
 )
+SUCCESS_MSG_GPX = (
+    "\n\n Les traces GPX sont déposées au chemin suivant :\n\n"
+)
 
 # Errors
 AMS_ERROR = "averageMovingSpeed (Allure moyenne en déplacement) not found for activity: "

@@ -6,7 +6,7 @@ from typing import Union, Optional
 
 from utils.base_utils import days_in_month
 from utils.api_utils import init_api, get_activities
-from utils.base_utils import save_settings, save_to_excel
+from utils.base_utils import save_settings, save_to_excel, save_gpx_files
 from utils.constants import (
     ACTIVITY_TYPES_MAPPING,
     DATE_ERROR,
@@ -16,6 +16,7 @@ from utils.constants import (
     MISSING_PASSWORD_ERROR,
     TOO_MANY_REQUESTS_ERROR,
     SUCCESS_MSG,
+    SUCCESS_MSG_GPX,
     CONNECTION_LOADING_MSG,
 )
 
@@ -183,7 +184,9 @@ def post_init(
         )
         return
 
-    activities_data = get_activities(
+    include_gpx = dict(Oui=True, Non=False).get(widgets["switch_gpx"].get())
+
+    activities_data, gpx_data = get_activities(
         api=api,
         startdate=startdate,
         enddate=enddate,
@@ -191,11 +194,18 @@ def post_init(
         progresstext=widgets["progress_text"],
         root=root,
         activitytype=activity_type,
+        include_gpx=include_gpx,
     )
 
     dump_path = save_to_excel(activities_data, startdate, enddate)
+    dump_path_gpx = save_gpx_files(gpx_data)
 
-    messagebox.showinfo("Succès", SUCCESS_MSG + dump_path)
+    if not include_gpx:
+        messagebox.showinfo("Succès", SUCCESS_MSG + dump_path)
+    else:
+        messagebox.showinfo(
+            "Succès", SUCCESS_MSG + dump_path + SUCCESS_MSG_GPX + dump_path_gpx
+        )
 
 
 def submit(root: CTk, widgets: dict) -> None:

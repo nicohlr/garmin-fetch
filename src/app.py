@@ -276,6 +276,8 @@ def create_main_window() -> None:
         "start_month": start_month,
         "start_year": start_year,
         "startdate_label": startdate_label,
+        "switch_gpx": switch_gpx,
+        "switch_gpx_label": switch_gpx_label,
         "submit_button": submit_button,
     }
 

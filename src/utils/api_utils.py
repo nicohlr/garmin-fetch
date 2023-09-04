@@ -44,6 +44,7 @@ def get_activities(
     progresstext: CTkLabel,
     root: CTk,
     activitytype: str = "",
+    include_gpx: bool = False,
 ) -> pd.DataFrame:
     """
     Get activities data from the Garmin API within a specified date range.
@@ -64,6 +65,8 @@ def get_activities(
             values include: 'cycling', 'running', 'swimming', 'multi_sport',
             'fitness_equipment', 'hiking', 'walking', and 'other'. Defaults to
             an empty string, implying all activity types are fetched.
+        include_gpx (str, optional): Whether gpx data should be downloaded
+            along with activities data. Defaults to False.
 
     Returns:
         pd.DataFrame: A DataFrame containing the activities data.
@@ -86,7 +89,7 @@ def get_activities(
     # Add missing data
     ams_list, dwf_list, dwr_list = ([], [], [])
     ams_top, dwf_top, dwr_top = (False, False, False)
-    hrz_data_list = []
+    hrz_data_list, gpx_data = ([], {})
 
     for activity in activities:
         activity_id = activity["activityId"]
@@ -113,6 +116,12 @@ def get_activities(
         except KeyError:
             dwr_list.append("")
             logging.info(DWR_ERROR + f"{activity_id}")
+
+        if include_gpx:
+            gpx_bytes = api.download_activity(
+                activity_id, dl_fmt=api.ActivityDownloadFormat.GPX
+            )
+            gpx_data.update({activity_id: gpx_bytes})
 
         # Update progress bar
         message = "Téléchargement des activités en cours ... "
@@ -164,4 +173,4 @@ def get_activities(
     # Process the data
     activities_data = process_activities_data(activities_data)
 
-    return activities_data
+    return activities_data, gpx_data

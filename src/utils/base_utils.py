@@ -121,7 +121,10 @@ def save_gpx_files(gpx_data: dict) -> str:
         # we are running in a normal Python environment
         bundle_dir = os.path.dirname(os.path.abspath(__file__))
 
-    for activity_id, byte_data in gpx_data:
+    # Create the directory if it doesn't exist
+    os.makedirs(os.path.join(bundle_dir, output_folder), exist_ok=True)
+
+    for activity_id, byte_data in gpx_data.items():
         dump_path = os.path.join(
             bundle_dir, output_folder, f"{activity_id}.gpx"
         )
