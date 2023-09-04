@@ -7,6 +7,12 @@ def process_activities_data(data):
     Returns:
         DataFrame: Processed activities data.
     """
+    data["Identifiant Garmin de l'activité"] = data[
+        "Identifiant Garmin de l'activité"
+    ].astype(str)
+    data["Identifiant de l'appareil Garmin"] = data[
+        "Identifiant de l'appareil Garmin"
+    ].astype(str)
 
     data["Comment vous êtes-vous senti ?"] = data[
         "Comment vous êtes-vous senti ?"
