@@ -3,7 +3,7 @@ ACTIVITY_DATA_MAPPING = {
 
     # General data
     "activityId": "Identifiant Garmin de l'activité",
-    "deviceId": "Identifiant de l'appareil Garmin",
+    "deviceId": "Identifiant Garmin de l'appareil",
     "startTimeLocal": "Date",
     "activityName": "Titre",
     "favorite": "Favori",
@@ -43,8 +43,6 @@ ACTIVITY_DATA_MAPPING = {
     "aerobicTrainingEffect": "Training Effect aérobie",
     "anaerobicTrainingEffect": "Training Effect anaérobie",
     "trainingEffectLabel": "Avantage principal Training Effect",
-    "aerobicTrainingEffectMessage": "Message Training Effect aérobie",
-    "anaerobicTrainingEffectMessage": "Message Training Effect anaérobie",
 
     # Données d'activités (toutes)
     "averageSpeed": "Allure moyenne (km/h)",

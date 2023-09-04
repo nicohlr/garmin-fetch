@@ -14,25 +14,39 @@ def process_activities_data(data):
         "Identifiant de l'appareil Garmin"
     ].astype(str)
 
-    data["Comment vous êtes-vous senti ?"] = data[
-        "Comment vous êtes-vous senti ?"
+    data["Avantage principal Training Effect"] = data[
+        "Avantage principal Training Effect"
     ].map(
         {
-            0: "Très faible",
-            25: "Faible",
-            50: "Normal(e)",
-            75: "Fort(e)",
-            100: "Très fort(e)",
+            'RECOVERY': "Récupération",
+            "TEMPO": "Tempo",
+            "AEROBIC_BASE": "Base",
+            "LACTATE_THRESHOLD": "Seuil",
+            "UNKNOWN": "",
+            "VO2MAX": "VO2 Max",
         }
     )
+    if "Comment vous êtes-vous senti ?" in data.columns:
+        data["Comment vous êtes-vous senti ?"] = data[
+            "Comment vous êtes-vous senti ?"
+        ].map(
+            {
+                0: "Très faible",
+                25: "Faible",
+                50: "Normal(e)",
+                75: "Fort(e)",
+                100: "Très fort(e)",
+            }
+        )
 
-    data["Effort perçu"] = (
-        (data["Effort perçu"].replace({"": -10}) / 10)
-        .fillna(-1)
-        .astype(int)
-        .astype(str)
-        .replace(str(-1), "")
-    )
+    if "Effort perçu" in data.columns:
+        data["Effort perçu"] = (
+            (data["Effort perçu"].replace({"": -10}) / 10)
+            .fillna(-1)
+            .astype(int)
+            .astype(str)
+            .replace(str(-1), "")
+        )
 
     data["Favori"] = (
         data["Favori"]
