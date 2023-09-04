@@ -94,3 +94,38 @@ def save_to_excel(data, startdate, enddate):
     data.to_excel(dump_path, index=False)
 
     return dump_path
+
+
+def save_gpx_files(gpx_data: dict) -> str:
+    """
+    Save GPX byte data to .gpx files in the 'gpx_data' folder.
+
+    This function determines the running environment (bundled application
+    or normal Python environment) and sets the save path accordingly. Each
+    GPX entry in the dictionary is saved as a separate file named by its
+    activity ID.
+
+    Args:
+        gpx_data (dict): A dictionary with activity IDs as keys and GPX byte
+            data as values.
+
+    Returns:
+        str: The path to the 'gpx_data' folder where the files were saved.
+    """
+    output_folder = "gpx_data"
+
+    if getattr(sys, "frozen", False):
+        # we are running in a bundle
+        bundle_dir = os.path.dirname(sys.executable)
+    else:
+        # we are running in a normal Python environment
+        bundle_dir = os.path.dirname(os.path.abspath(__file__))
+
+    for activity_id, byte_data in gpx_data:
+        dump_path = os.path.join(
+            bundle_dir, output_folder, f"{activity_id}.gpx"
+        )
+        with open(dump_path, "wb") as file:
+            file.write(byte_data)
+
+    return os.path.join(bundle_dir, output_folder)

@@ -17,6 +17,7 @@ from customtkinter import (
     CTkProgressBar,
     CTkImage,
     CTkComboBox,
+    CTkSegmentedButton,
 )
 
 
@@ -219,13 +220,24 @@ def create_main_window() -> None:
         padx=60,
     )
 
+    switch_gpx_label = CTkLabel(root, text="Inclure les traces GPX :")
+
+    switch_gpx = CTkSegmentedButton(root, values=["Oui", "Non"])
+    switch_gpx.set("Non")
+    switch_gpx_label.grid(
+        row=12, column=0, columnspan=2, sticky="ew", pady=(9, 0), padx=(50, 0)
+    )
+    switch_gpx.grid(
+        row=12, column=2, sticky="ew", padx=(40, 60), pady=(12, 0), ipadx=25,
+    )
+
     submit_button = CTkButton(
         root,
         text="Télécharger les activités ↓",
     )
     submit_button.grid(
         sticky="ew",
-        row=12,
+        row=13,
         column=0,
         columnspan=3,
         pady=(20, 60),

@@ -265,10 +265,10 @@ def submit(root: CTk, widgets: dict) -> None:
     widgets["progress_text"].configure(text=CONNECTION_LOADING_MSG)
     widgets["progress"]["mode"] = "indeterminate"
     widgets["progress_text"].grid(
-        sticky="ew", row=13, column=0, columnspan=3, pady=(10, 0)
+        sticky="ew", row=14, column=0, columnspan=3, pady=(10, 0)
     )
     widgets["progress"].grid(
-        sticky="ew", row=14, column=0, columnspan=3, pady=(0, 50), padx=40
+        sticky="ew", row=15, column=0, columnspan=3, pady=(0, 50), padx=40
     )
     widgets["submit_button"].grid_configure(pady=(30, 10))
 
