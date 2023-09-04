@@ -10,8 +10,8 @@ def process_activities_data(data):
     data["Identifiant Garmin de l'activité"] = data[
         "Identifiant Garmin de l'activité"
     ].astype(str)
-    data["Identifiant de l'appareil Garmin"] = data[
-        "Identifiant de l'appareil Garmin"
+    data["Identifiant Garmin de l'appareil"] = data[
+        "Identifiant Garmin de l'appareil"
     ].astype(str)
 
     data["Avantage principal Training Effect"] = data[
