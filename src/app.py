@@ -225,15 +225,10 @@ def create_main_window() -> None:
     switch_gpx = CTkSegmentedButton(root, values=["Oui", "Non"])
     switch_gpx.set("Non")
     switch_gpx_label.grid(
-        row=12, column=0, columnspan=2, sticky="ew", pady=(9, 0), padx=(50, 0)
+        row=12, column=0, columnspan=2, sticky="ew", pady=(9, 0)
     )
     switch_gpx.grid(
-        row=12,
-        column=2,
-        sticky="ew",
-        padx=(40, 60),
-        pady=(12, 0),
-        ipadx=25,
+        row=12, column=2, columnspan=2, sticky="ew", pady=(12, 0), padx=(0, 60)
     )
 
     submit_button = CTkButton(
