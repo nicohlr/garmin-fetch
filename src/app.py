@@ -220,14 +220,14 @@ def create_main_window() -> None:
         padx=60,
     )
 
-    switch_gpx_label = CTkLabel(root, text="Inclure les traces GPX :")
+    switch_tcx_label = CTkLabel(root, text="Inclure les traces TCX :")
 
-    switch_gpx = CTkSegmentedButton(root, values=["Oui", "Non"])
-    switch_gpx.set("Non")
-    switch_gpx_label.grid(
+    switch_tcx = CTkSegmentedButton(root, values=["Oui", "Non"])
+    switch_tcx.set("Non")
+    switch_tcx_label.grid(
         row=12, column=0, columnspan=2, sticky="ew", pady=(9, 0)
     )
-    switch_gpx.grid(
+    switch_tcx.grid(
         row=12, column=2, columnspan=2, sticky="ew", pady=(12, 0), padx=(0, 60)
     )
 
@@ -276,8 +276,8 @@ def create_main_window() -> None:
         "start_month": start_month,
         "start_year": start_year,
         "startdate_label": startdate_label,
-        "switch_gpx": switch_gpx,
-        "switch_gpx_label": switch_gpx_label,
+        "switch_tcx": switch_tcx,
+        "switch_tcx_label": switch_tcx_label,
         "submit_button": submit_button,
     }
 

@@ -96,23 +96,23 @@ def save_to_excel(data, startdate, enddate):
     return dump_path
 
 
-def save_gpx_files(gpx_data: dict) -> str:
+def save_tcx_files(tcx_data: dict) -> str:
     """
-    Save GPX byte data to .gpx files in the 'gpx_data' folder.
+    Save TCX byte data to .tcx files in the 'tcx_data' folder.
 
     This function determines the running environment (bundled application
     or normal Python environment) and sets the save path accordingly. Each
-    GPX entry in the dictionary is saved as a separate file named by its
+    TCX entry in the dictionary is saved as a separate file named by its
     activity ID.
 
     Args:
-        gpx_data (dict): A dictionary with activity IDs as keys and GPX byte
+        tcx_data (dict): A dictionary with activity IDs as keys and TCX byte
             data as values.
 
     Returns:
-        str: The path to the 'gpx_data' folder where the files were saved.
+        str: The path to the 'tcx_data' folder where the files were saved.
     """
-    output_folder = "gpx_data"
+    output_folder = "tcx_data"
 
     if getattr(sys, "frozen", False):
         # we are running in a bundle
@@ -124,9 +124,9 @@ def save_gpx_files(gpx_data: dict) -> str:
     # Create the directory if it doesn't exist
     os.makedirs(os.path.join(bundle_dir, output_folder), exist_ok=True)
 
-    for activity_id, byte_data in gpx_data.items():
+    for activity_id, byte_data in tcx_data.items():
         dump_path = os.path.join(
-            bundle_dir, output_folder, f"{activity_id}.gpx"
+            bundle_dir, output_folder, f"{activity_id}.tcx"
         )
         with open(dump_path, "wb") as file:
             file.write(byte_data)

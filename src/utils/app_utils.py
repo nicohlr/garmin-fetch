@@ -6,7 +6,7 @@ from typing import Union, Optional
 
 from utils.base_utils import days_in_month
 from utils.api_utils import init_api, get_activities
-from utils.base_utils import save_settings, save_to_excel, save_gpx_files
+from utils.base_utils import save_settings, save_to_excel, save_tcx_files
 from utils.constants import (
     ACTIVITY_TYPES_MAPPING,
     DATE_ERROR,
@@ -16,7 +16,7 @@ from utils.constants import (
     MISSING_PASSWORD_ERROR,
     TOO_MANY_REQUESTS_ERROR,
     SUCCESS_MSG,
-    SUCCESS_MSG_GPX,
+    SUCCESS_MSG_TCX,
     CONNECTION_LOADING_MSG,
 )
 
@@ -184,9 +184,9 @@ def post_init(
         )
         return
 
-    include_gpx = dict(Oui=True, Non=False).get(widgets["switch_gpx"].get())
+    include_tcx = dict(Oui=True, Non=False).get(widgets["switch_tcx"].get())
 
-    activities_data, gpx_data = get_activities(
+    activities_data, tcx_data = get_activities(
         api=api,
         startdate=startdate,
         enddate=enddate,
@@ -194,17 +194,17 @@ def post_init(
         progresstext=widgets["progress_text"],
         root=root,
         activitytype=activity_type,
-        include_gpx=include_gpx,
+        include_tcx=include_tcx,
     )
 
     dump_path = save_to_excel(activities_data, startdate, enddate)
-    dump_path_gpx = save_gpx_files(gpx_data)
+    dump_path_tcx = save_tcx_files(tcx_data)
 
-    if not include_gpx:
+    if not include_tcx:
         messagebox.showinfo("Succès", SUCCESS_MSG + dump_path)
     else:
         messagebox.showinfo(
-            "Succès", SUCCESS_MSG + dump_path + SUCCESS_MSG_GPX + dump_path_gpx
+            "Succès", SUCCESS_MSG + dump_path + SUCCESS_MSG_TCX + dump_path_tcx
         )
 
 
