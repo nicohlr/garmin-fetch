@@ -220,12 +220,17 @@ def create_main_window() -> None:
         padx=60,
     )
 
-    switch_tcx_label = CTkLabel(root, text="Inclure les traces TCX :")
+    switch_tcx_label = CTkLabel(
+        root,
+        text="Inclure les données au format TCX :\n(téléchargement plus long)",
+        justify="left",
+        font=("SF Display", 11)
+    )
 
     switch_tcx = CTkSegmentedButton(root, values=["Oui", "Non"])
     switch_tcx.set("Non")
     switch_tcx_label.grid(
-        row=12, column=0, columnspan=2, sticky="ew", pady=(9, 0)
+        row=12, column=0, columnspan=2, sticky="ew", pady=(9, 0), padx=(50, 0)
     )
     switch_tcx.grid(
         row=12, column=2, columnspan=2, sticky="ew", pady=(12, 0), padx=(0, 60)
