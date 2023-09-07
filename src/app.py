@@ -1,5 +1,6 @@
 import os
 import sys
+import customtkinter
 
 from functools import partial
 from datetime import datetime
@@ -19,6 +20,8 @@ from customtkinter import (
     CTkComboBox,
     CTkSegmentedButton,
 )
+
+customtkinter.set_appearance_mode("dark")
 
 
 def create_main_window() -> None:
@@ -97,9 +100,7 @@ def create_main_window() -> None:
     )
 
     password_label = CTkLabel(root, text="Mot de passe :")
-    password_label.grid(
-        sticky="ew", row=4, column=0, columnspan=3
-    )
+    password_label.grid(sticky="ew", row=4, column=0, columnspan=3)
 
     password_entry = CTkEntry(root, show="●")
     password_entry.grid(
@@ -116,7 +117,10 @@ def create_main_window() -> None:
 
     startdate_label = CTkLabel(root, text="Date de début (JJ-MM-AAAA) :")
     startdate_label.grid(
-        sticky="ew", row=6, column=0, columnspan=3,
+        sticky="ew",
+        row=6,
+        column=0,
+        columnspan=3,
     )
 
     start_day = CTkComboBox(
@@ -224,7 +228,7 @@ def create_main_window() -> None:
         root,
         text="Inclure les données au format TCX \n(téléchargement plus long) :",
         justify="left",
-        font=("SF Display", 11)
+        font=("SF Display", 11),
     )
 
     switch_tcx = CTkSegmentedButton(root, values=["Oui", "Non"])
