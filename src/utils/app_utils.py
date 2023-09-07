@@ -245,11 +245,11 @@ def submit(root: CTk, widgets: dict) -> None:
     # Check if password is empty
     if not email:
         widgets["error_message"].configure(text=MISSING_EMAIL_ERROR)
-
+        reset_interface(widgets)
         return
 
     # Check email validity
-    if not email or "@" not in email:
+    if "@" not in email:
         widgets["error_message"].configure(text=WRONG_EMAIL_ERROR)
         reset_interface(widgets)
         return
