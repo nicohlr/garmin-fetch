@@ -229,13 +229,13 @@ def create_main_window() -> None:
         text="Inclure les données au format TCX : ",
         justify="left",
         anchor="w",
-        font=("SF Display", 11),
+        font=("SF Display", 10.5),
     )
 
     switch_tcx = CTkSegmentedButton(root, values=["Oui", "Non"])
     switch_tcx.set("Non")
     switch_tcx_label.grid(
-        row=12, column=0, columnspan=2, sticky="ew", pady=(10, 0), padx=(60, 0)
+        row=12, column=0, columnspan=2, sticky="ew", pady=(12, 0), padx=(60, 0)
     )
     switch_tcx.grid(
         row=12, column=2, columnspan=2, sticky="ew", pady=(12, 0), padx=(0, 60)
