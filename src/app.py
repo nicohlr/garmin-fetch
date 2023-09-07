@@ -93,12 +93,12 @@ def create_main_window() -> None:
         columnspan=3,
         pady=(0, 10),
         ipadx=70,
-        padx=40,
+        padx=60,
     )
 
     password_label = CTkLabel(root, text="Mot de passe :")
     password_label.grid(
-        sticky="ew", row=4, column=0, columnspan=3, pady=(10, 0)
+        sticky="ew", row=4, column=0, columnspan=3
     )
 
     password_entry = CTkEntry(root, show="●")
@@ -108,15 +108,15 @@ def create_main_window() -> None:
         column=0,
         columnspan=3,
         pady=(0, 10),
-        ipadx=70,
-        padx=40,
+        ipadx=60,
+        padx=60,
     )
 
     current_year = datetime.now().year
 
     startdate_label = CTkLabel(root, text="Date de début (JJ-MM-AAAA) :")
     startdate_label.grid(
-        sticky="ew", row=6, column=0, columnspan=3, pady=(10, 0)
+        sticky="ew", row=6, column=0, columnspan=3,
     )
 
     start_day = CTkComboBox(
@@ -222,7 +222,7 @@ def create_main_window() -> None:
 
     switch_tcx_label = CTkLabel(
         root,
-        text="Inclure les données au format TCX :\n(téléchargement plus long)",
+        text="Inclure les données au format TCX \n(téléchargement plus long) :",
         justify="left",
         font=("SF Display", 11)
     )
