@@ -6,7 +6,7 @@ from typing import Union, Optional
 
 from utils.base_utils import days_in_month
 from utils.api_utils import init_api, get_activities
-from utils.base_utils import save_settings, save_to_excel
+from utils.base_utils import save_settings, save_to_excel, save_tcx_files
 from utils.constants import (
     ACTIVITY_TYPES_MAPPING,
     DATE_ERROR,
@@ -16,6 +16,7 @@ from utils.constants import (
     MISSING_PASSWORD_ERROR,
     TOO_MANY_REQUESTS_ERROR,
     SUCCESS_MSG,
+    SUCCESS_MSG_TCX,
     CONNECTION_LOADING_MSG,
 )
 
@@ -183,7 +184,9 @@ def post_init(
         )
         return
 
-    activities_data = get_activities(
+    include_tcx = dict(Oui=True, Non=False).get(widgets["switch_tcx"].get())
+
+    activities_data, tcx_data = get_activities(
         api=api,
         startdate=startdate,
         enddate=enddate,
@@ -191,11 +194,18 @@ def post_init(
         progresstext=widgets["progress_text"],
         root=root,
         activitytype=activity_type,
+        include_tcx=include_tcx,
     )
 
     dump_path = save_to_excel(activities_data, startdate, enddate)
+    dump_path_tcx = save_tcx_files(tcx_data)
 
-    messagebox.showinfo("Succès", SUCCESS_MSG + dump_path)
+    if not include_tcx:
+        messagebox.showinfo("Succès", SUCCESS_MSG + dump_path)
+    else:
+        messagebox.showinfo(
+            "Succès", SUCCESS_MSG + dump_path + SUCCESS_MSG_TCX + dump_path_tcx
+        )
 
 
 def submit(root: CTk, widgets: dict) -> None:
@@ -235,11 +245,11 @@ def submit(root: CTk, widgets: dict) -> None:
     # Check if password is empty
     if not email:
         widgets["error_message"].configure(text=MISSING_EMAIL_ERROR)
-
+        reset_interface(widgets)
         return
 
     # Check email validity
-    if not email or "@" not in email:
+    if "@" not in email:
         widgets["error_message"].configure(text=WRONG_EMAIL_ERROR)
         reset_interface(widgets)
         return
@@ -265,10 +275,10 @@ def submit(root: CTk, widgets: dict) -> None:
     widgets["progress_text"].configure(text=CONNECTION_LOADING_MSG)
     widgets["progress"]["mode"] = "indeterminate"
     widgets["progress_text"].grid(
-        sticky="ew", row=13, column=0, columnspan=3, pady=(10, 0)
+        sticky="ew", row=14, column=0, columnspan=3, pady=(10, 0)
     )
     widgets["progress"].grid(
-        sticky="ew", row=14, column=0, columnspan=3, pady=(0, 50), padx=40
+        sticky="ew", row=15, column=0, columnspan=3, pady=(0, 50), padx=60
     )
     widgets["submit_button"].grid_configure(pady=(30, 10))
 

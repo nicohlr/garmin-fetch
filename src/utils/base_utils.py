@@ -94,3 +94,41 @@ def save_to_excel(data, startdate, enddate):
     data.to_excel(dump_path, index=False)
 
     return dump_path
+
+
+def save_tcx_files(tcx_data: dict) -> str:
+    """
+    Save TCX byte data to .tcx files in the 'tcx_data' folder.
+
+    This function determines the running environment (bundled application
+    or normal Python environment) and sets the save path accordingly. Each
+    TCX entry in the dictionary is saved as a separate file named by its
+    activity ID.
+
+    Args:
+        tcx_data (dict): A dictionary with activity IDs as keys and TCX byte
+            data as values.
+
+    Returns:
+        str: The path to the 'tcx_data' folder where the files were saved.
+    """
+    output_folder = "tcx_data"
+
+    if getattr(sys, "frozen", False):
+        # we are running in a bundle
+        bundle_dir = os.path.dirname(sys.executable)
+    else:
+        # we are running in a normal Python environment
+        bundle_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Create the directory if it doesn't exist
+    os.makedirs(os.path.join(bundle_dir, output_folder), exist_ok=True)
+
+    for activity_id, byte_data in tcx_data.items():
+        dump_path = os.path.join(
+            bundle_dir, output_folder, f"{activity_id}.tcx"
+        )
+        with open(dump_path, "wb") as file:
+            file.write(byte_data)
+
+    return os.path.join(bundle_dir, output_folder)

@@ -1,11 +1,21 @@
+import logging
 import pandas as pd
 
 from io import BytesIO
+from itertools import zip_longest
 from garminconnect import Garmin
 
 from .data_utils import process_activities_data
+from .constants import ACTIVITY_DATA_MAPPING, AMS_ERROR, DWF_ERROR, DWR_ERROR
 
 from customtkinter import CTk, CTkProgressBar, CTkLabel
+
+
+logging.basicConfig(
+    level="INFO",
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 
 def init_api(email: str, password: str) -> Garmin:
@@ -34,6 +44,7 @@ def get_activities(
     progresstext: CTkLabel,
     root: CTk,
     activitytype: str = "",
+    include_tcx: bool = False,
 ) -> pd.DataFrame:
     """
     Get activities data from the Garmin API within a specified date range.
@@ -54,33 +65,63 @@ def get_activities(
             values include: 'cycling', 'running', 'swimming', 'multi_sport',
             'fitness_equipment', 'hiking', 'walking', and 'other'. Defaults to
             an empty string, implying all activity types are fetched.
+        include_tcx (str, optional): Whether tcx data should be downloaded
+            along with activities data. Defaults to False.
 
     Returns:
         pd.DataFrame: A DataFrame containing the activities data.
     """
+    # Initialize progress bar
+    iter_count = 1
+    message = "Initialisation du téléchargement des activités ... "
+    progresstext.configure(text=message)
+    progressbar.set(0)
+    root.update_idletasks()
 
+    # Download activities default data
     activities = api.get_activities_by_date(startdate, enddate, activitytype)
 
-    activities_data = pd.DataFrame()
+    # Format activities default data
+    activities_data = pd.DataFrame(activities)
+    activities_data = activities_data[ACTIVITY_DATA_MAPPING.keys()]
+    activities_data = activities_data.rename(columns=ACTIVITY_DATA_MAPPING)
 
-    iter_count = 1
-    progressbar.set(0)
+    # Add missing data
+    ams_list, dwf_list, dwr_list = ([], [], [])
+    ams_top, dwf_top, dwr_top = (False, False, False)
+    hrz_data_list, tcx_data = ([], {})
 
-    # Download activities
     for activity in activities:
         activity_id = activity["activityId"]
 
-        csv_data = api.download_activity(
-            activity_id, dl_fmt=api.ActivityDownloadFormat.CSV
-        )
-        activity_data = pd.read_csv(BytesIO(csv_data)).tail(1)
+        details_data = api.get_activity_evaluation(activity_id)
 
-        activity_data["Type d'activité"] = activity["activityType"]["typeKey"]
-        activity_data["Date"] = activity["startTimeLocal"]
-        activity_data["Favori"] = str(activity["favorite"]).upper()
-        activity_data["Titre"] = activity["activityName"]
+        hrz_data = api.get_activity_hr_in_timezones(activity_id)
+        hrz_data_list.append(hrz_data)
 
-        activities_data = pd.concat([activities_data, activity_data])
+        try:
+            ams_list.append(details_data["summaryDTO"]["averageMovingSpeed"])
+        except KeyError:
+            ams_list.append("")
+            logging.info(AMS_ERROR + f"{activity_id}")
+        try:
+            dwf_list.append(details_data["summaryDTO"]["directWorkoutFeel"])
+            dwf_top = True
+        except KeyError:
+            dwf_list.append("")
+            logging.info(DWF_ERROR + f"{activity_id}")
+        try:
+            dwr_list.append(details_data["summaryDTO"]["directWorkoutRpe"])
+            dwr_top = True
+        except KeyError:
+            dwr_list.append("")
+            logging.info(DWR_ERROR + f"{activity_id}")
+
+        if include_tcx:
+            tcx_bytes = api.download_activity(
+                activity_id, dl_fmt=api.ActivityDownloadFormat.TCX
+            )
+            tcx_data.update({activity_id: tcx_bytes})
 
         # Update progress bar
         message = "Téléchargement des activités en cours ... "
@@ -90,10 +131,46 @@ def get_activities(
         root.update_idletasks()
         iter_count += 1
 
+    # Add detailled data
+    meanspeed_idx = activities_data.columns.get_loc("Allure moyenne (km/h)")
+    if ams_top:
+        activities_data.insert(
+            meanspeed_idx + 1,
+            "Allure moyenne en déplacement (km/h)",
+            ams_list,
+        )
+    exload_idx = activities_data.columns.get_loc("Exercise load")
+    if dwf_top:
+        activities_data.insert(
+            exload_idx + 1,
+            "Comment vous êtes-vous senti ?",
+            dwf_list,
+        )
+    if dwr_top:
+        activities_data.insert(
+            exload_idx + 2,
+            "Effort perçu",
+            dwr_list,
+        )
+
+    # Add HR zones data
+    maxhr_idx = activities_data.columns.get_loc("Fréquence cardiaque maximale (bpm)")
+    hrzones_cols = [
+        [zone.get("secsInZone", "") if zone else "" for zone in activity]
+        for activity in zip_longest(*hrz_data_list)
+    ]
+    for i, col in enumerate(hrzones_cols):
+        activities_data.insert(
+            maxhr_idx + i + 1,
+            f"Temps en Zone de FC {i + 1} (sec)",
+            col,
+        )
+
+    # Final update progresstext
     display_text = f"Téléchargement de {len(activities)} activité(s) terminé !"
     progresstext.configure(text=display_text)
 
     # Process the data
     activities_data = process_activities_data(activities_data)
 
-    return activities_data
+    return activities_data, tcx_data
